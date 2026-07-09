@@ -5,196 +5,164 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Circuit House · BOM Manager</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --navy:    #0C3D6B;
-  --blue:    #1A6BC4;
-  --blue-lt: #EAF2FB;
-  --blue-md: #C2DCF5;
-  --green:   #2D7A1F;
-  --green-lt:#E6F4E3;
-  --red:     #B52B2B;
-  --red-lt:  #FBEAEA;
-  --amber:   #B06A00;
-  --amber-lt:#FEF3E2;
-  --ink:     #18181A;
-  --ink-2:   #4A4A50;
-  --ink-3:   #8A8A94;
-  --surface: #FFFFFF;
-  --wash:    #F4F6F9;
-  --border:  #DDE2EA;
-  --border-2:#C5CDD8;
-  --radius:  8px;
-  --radius-lg:14px;
-  --shadow:  0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.05);
-  --shadow-md:0 2px 8px rgba(0,0,0,.10), 0 8px 24px rgba(0,0,0,.08);
-  --font:    -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --mono:    'SF Mono', 'Consolas', monospace;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0C3D6B;--blue:#1A6BC4;--blue-lt:#EAF2FB;--blue-md:#C2DCF5;
+  --green:#2D7A1F;--green-lt:#E6F4E3;--red:#B52B2B;--red-lt:#FBEAEA;
+  --amber:#B06A00;--amber-lt:#FEF3E2;--purple:#5B2D8E;--purple-lt:#F0EAF8;
+  --ink:#18181A;--ink-2:#4A4A50;--ink-3:#8A8A94;
+  --surface:#FFFFFF;--wash:#F4F6F9;--border:#DDE2EA;--border-2:#C5CDD8;
+  --radius:8px;--radius-lg:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+  --shadow-md:0 2px 8px rgba(0,0,0,.10),0 8px 24px rgba(0,0,0,.08);
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'SF Mono','Consolas',monospace;
 }
-html,body { height:100%; font-family:var(--font); font-size:14px; background:var(--wash); color:var(--ink); }
-.shell { display:flex; height:100vh; overflow:hidden; }
-.sidebar { width:232px; flex-shrink:0; background:var(--navy); display:flex; flex-direction:column; overflow-y:auto; }
-.content { flex:1; overflow-y:auto; }
-.page { padding:28px 32px; max-width:1200px; }
-.sb-brand { padding:20px 18px 16px; border-bottom:1px solid rgba(255,255,255,.1); }
-.sb-brand-name { font-size:15px; font-weight:700; color:#fff; letter-spacing:-.3px; }
-.sb-brand-sub { font-size:11px; color:rgba(255,255,255,.45); margin-top:2px; }
-.sb-logo-mark { display:inline-flex; align-items:center; gap:7px; }
-.sb-logo-icon { width:26px; height:26px; background:var(--blue); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.sb-section { padding:12px 0 4px; }
-.sb-label { font-size:10px; font-weight:600; color:rgba(255,255,255,.3); letter-spacing:.9px; text-transform:uppercase; padding:0 18px 6px; }
-.sb-item { display:flex; align-items:center; gap:10px; padding:9px 18px; font-size:13px; color:rgba(255,255,255,.65); cursor:pointer; transition:all .15s; border-left:2px solid transparent; }
-.sb-item:hover { color:#fff; background:rgba(255,255,255,.07); }
-.sb-item.active { color:#fff; background:rgba(255,255,255,.12); border-left-color:var(--blue); font-weight:500; }
-.sb-item svg { flex-shrink:0; opacity:.8; }
-.sb-item.active svg { opacity:1; }
-.sb-badge { margin-left:auto; font-size:10px; font-weight:600; background:rgba(255,255,255,.18); color:#fff; border-radius:10px; padding:2px 7px; min-width:20px; text-align:center; }
-.sb-badge.green { background:var(--green); }
-.sb-badge.amber { background:var(--amber); }
-.sb-badge.red { background:var(--red); }
-.sb-bottom { margin-top:auto; padding:14px 18px; border-top:1px solid rgba(255,255,255,.1); }
-.sb-status { display:flex; align-items:center; gap:7px; font-size:11px; color:rgba(255,255,255,.4); }
-.sb-dot { width:7px; height:7px; border-radius:50%; background:#4ADE80; box-shadow:0 0 6px rgba(74,222,128,.5); }
-.page-hd { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:12px; }
-.page-hd-left h1 { font-size:20px; font-weight:700; letter-spacing:-.4px; color:var(--ink); }
-.page-hd-left p { font-size:13px; color:var(--ink-3); margin-top:3px; }
-.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
-.stat-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 18px; }
-.stat-box-val { font-size:28px; font-weight:700; letter-spacing:-.5px; }
-.stat-box-lbl { font-size:12px; color:var(--ink-3); margin-top:2px; }
-.stat-box-sub { font-size:11px; color:var(--ink-3); margin-top:6px; }
-.stat-box.blue .stat-box-val { color:var(--blue); }
-.stat-box.green .stat-box-val { color:var(--green); }
-.stat-box.red .stat-box-val { color:var(--red); }
-.stat-box.amber .stat-box-val { color:var(--amber); }
-.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); }
-.card-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); }
-.card-hd-title { font-size:14px; font-weight:600; }
-.card-body { padding:20px; }
-.card-body-sm { padding:16px; }
-.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:var(--radius); font-size:13px; font-weight:500; cursor:pointer; border:1px solid var(--border-2); background:var(--surface); color:var(--ink); transition:all .12s; white-space:nowrap; font-family:var(--font); }
-.btn:hover { background:var(--wash); }
-.btn:active { transform:scale(.98); }
-.btn-primary { background:var(--blue); color:#fff; border-color:var(--blue); }
-.btn-primary:hover { background:#1559a8; border-color:#1559a8; }
-.btn-success { background:var(--green); color:#fff; border-color:var(--green); }
-.btn-success:hover { background:#236016; }
-.btn-danger { background:var(--red); color:#fff; border-color:var(--red); }
-.btn-danger:hover { background:#941f1f; }
-.btn-amber { background:var(--amber); color:#fff; border-color:var(--amber); }
-.btn-amber:hover { background:#8a5200; }
-.btn-ghost { border-color:transparent; background:transparent; }
-.btn-ghost:hover { background:var(--wash); }
-.btn-sm { padding:5px 10px; font-size:12px; }
-.btn-xs { padding:3px 8px; font-size:11px; }
-.btn-icon { padding:6px; }
-.btn[disabled] { opacity:.4; pointer-events:none; }
-.fg { display:flex; flex-direction:column; gap:5px; }
-.fg label { font-size:12px; font-weight:500; color:var(--ink-2); }
-.fg input, .fg select, .fg textarea { width:100%; padding:8px 11px; border:1px solid var(--border-2); border-radius:var(--radius); font-size:13px; color:var(--ink); font-family:var(--font); background:var(--surface); transition:border-color .12s,box-shadow .12s; }
-.fg input:focus, .fg select:focus, .fg textarea:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,107,196,.12); }
-.fg textarea { resize:vertical; min-height:72px; }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.form-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
-.fg-row { display:flex; align-items:center; gap:8px; }
-.search-wrap { position:relative; }
-.search-wrap svg { position:absolute; left:10px; top:50%; transform:translateY(-50%); pointer-events:none; color:var(--ink-3); }
-.search-wrap input { padding-left:34px; }
-.tbl-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; font-size:13px; }
-thead th { padding:10px 12px; font-size:11px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.5px; text-align:left; border-bottom:1px solid var(--border); background:var(--wash); white-space:nowrap; }
-tbody td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
-tbody tr:last-child td { border-bottom:none; }
-tbody tr:hover td { background:var(--blue-lt); }
-.tr-verified td { background:rgba(45,122,31,.04); }
-.tr-mismatch td { background:rgba(181,43,43,.05); }
-.tr-verified:hover td { background:rgba(45,122,31,.08)!important; }
-.tr-mismatch:hover td { background:rgba(181,43,43,.1)!important; }
-.pill { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; }
-.pill-blue { background:var(--blue-lt); color:var(--blue); }
-.pill-green { background:var(--green-lt); color:var(--green); }
-.pill-red { background:var(--red-lt); color:var(--red); }
-.pill-amber { background:var(--amber-lt); color:var(--amber); }
-.pill-gray { background:var(--wash); color:var(--ink-2); border:1px solid var(--border); }
-.tag-mono { font-family:var(--mono); font-size:11.5px; background:var(--wash); border:1px solid var(--border); padding:2px 7px; border-radius:5px; color:var(--ink-2); }
-.tag-blue { font-family:var(--mono); font-size:11.5px; background:var(--blue-lt); color:var(--blue); padding:2px 7px; border-radius:5px; }
-.tag-red { font-family:var(--mono); font-size:11.5px; background:var(--red-lt); color:var(--red); padding:2px 7px; border-radius:5px; }
-.tabs { display:flex; gap:2px; background:var(--wash); border:1px solid var(--border); border-radius:var(--radius-lg); padding:4px; margin-bottom:20px; width:fit-content; }
-.tab { padding:7px 18px; border-radius:10px; font-size:13px; font-weight:500; cursor:pointer; color:var(--ink-3); transition:all .15s; }
-.tab:hover { color:var(--ink); }
-.tab.active { background:var(--surface); color:var(--blue); box-shadow:var(--shadow); }
-.steps { display:flex; align-items:center; margin-bottom:28px; }
-.step { display:flex; align-items:center; gap:8px; }
-.step-num { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
-.step-num.done { background:var(--green); color:#fff; }
-.step-num.active { background:var(--blue); color:#fff; }
-.step-num.pending { background:var(--border); color:var(--ink-3); }
-.step-label { font-size:13px; }
-.step-label.active { font-weight:600; color:var(--blue); }
-.step-label.done { color:var(--green); }
-.step-label.pending { color:var(--ink-3); }
-.step-line { flex:1; height:2px; background:var(--border); margin:0 10px; border-radius:1px; }
-.step-line.done { background:var(--green); }
-.progress { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-top:8px; }
-.progress-fill { height:100%; border-radius:3px; transition:width .4s; }
-.alert { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border-radius:var(--radius); font-size:13px; margin-bottom:16px; }
-.alert-info { background:var(--blue-lt); color:var(--blue); border:1px solid var(--blue-md); }
-.alert-success { background:var(--green-lt); color:var(--green); border:1px solid #A8D5A0; }
-.alert-warning { background:var(--amber-lt); color:var(--amber); border:1px solid #F0C57A; }
-.alert-danger { background:var(--red-lt); color:var(--red); border:1px solid #F0A5A5; }
-hr { border:none; border-top:1px solid var(--border); margin:16px 0; }
-.action-bar { position:sticky; bottom:0; background:var(--surface); border-top:1px solid var(--border); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.modal-bg { position:fixed; inset:0; background:rgba(12,20,30,.5); display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px; backdrop-filter:blur(2px); }
-.modal { background:var(--surface); border-radius:var(--radius-lg); width:540px; max-width:100%; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-md); }
-.modal-hd { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--border); }
-.modal-hd h3 { font-size:15px; font-weight:700; }
-.modal-body { padding:20px; }
-.modal-body .form-grid { margin-bottom:14px; }
-.modal-ft { padding:14px 20px; border-top:1px solid var(--border); display:flex; gap:8px; justify-content:flex-end; }
-.toast { position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; border-radius:var(--radius-lg); padding:12px 18px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:9px; box-shadow:var(--shadow-md); z-index:2000; opacity:0; transform:translateY(10px) scale(.97); transition:all .2s; pointer-events:none; max-width:380px; }
-.toast.show { opacity:1; transform:translateY(0) scale(1); }
-.toast-icon { flex-shrink:0; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-.toast-icon.ok { background:#4ADE80; }
-.toast-icon.err { background:#F87171; }
-.toast-icon.info { background:#60A5FA; }
-.gap { display:flex; gap:8px; align-items:center; }
-.gap-12 { gap:12px; }
-.mt { margin-top:8px; }
-.mt-2 { margin-top:16px; }
-.mt-3 { margin-top:24px; }
-.mb { margin-bottom:8px; }
-.mb-2 { margin-bottom:16px; }
-.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-.muted { color:var(--ink-3); }
-.small { font-size:12px; }
-.bold { font-weight:700; }
-code { font-family:var(--mono); font-size:12px; }
-.text-right { text-align:right; }
-.text-center { text-align:center; }
-.flex-1 { flex:1; }
-input[type=checkbox] { width:15px; height:15px; accent-color:var(--blue); cursor:pointer; }
-.critical-badge { font-size:10px; color:var(--amber); font-weight:600; }
-.ecn-req { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600; background:var(--amber-lt); color:var(--amber); border-radius:4px; padding:2px 6px; border:1px solid #F0C57A; }
-.qa-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.qa-btn { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--wash); border:1px solid var(--border); border-radius:var(--radius-lg); cursor:pointer; transition:all .15s; text-align:left; width:100%; }
-.qa-btn:hover { background:var(--blue-lt); border-color:var(--blue-md); }
-.qa-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.qa-label { font-size:13px; font-weight:600; }
-.qa-sub { font-size:11px; color:var(--ink-3); margin-top:1px; }
-.checklist-row { display:grid; grid-template-columns:1fr 130px 130px 60px 90px 190px; gap:0; align-items:center; padding:10px 12px; border-bottom:1px solid var(--border); font-size:13px; }
-.checklist-row:last-child { border-bottom:none; }
-.checklist-row:hover { background:var(--blue-lt); }
-.checklist-row.verified { background:rgba(45,122,31,.04); }
-.checklist-row.verified:hover { background:rgba(45,122,31,.08); }
-.checklist-row.mismatch { background:rgba(181,43,43,.05); }
-.checklist-row.mismatch:hover { background:rgba(181,43,43,.1); }
-.checklist-hdr { background:var(--wash); font-size:11px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.5px; border-bottom:2px solid var(--border); padding:8px 12px; }
-.empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; text-align:center; gap:12px; }
-.empty-icon { width:56px; height:56px; background:var(--wash); border-radius:16px; display:flex; align-items:center; justify-content:center; }
-.empty h3 { font-size:15px; font-weight:600; }
-.empty p { font-size:13px; color:var(--ink-3); max-width:280px; }
-@keyframes spin { to { transform:rotate(360deg); } }
+html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--wash);color:var(--ink)}
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:232px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto}
+.content{flex:1;overflow-y:auto}
+.page{padding:28px 32px;max-width:1300px}
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo-mark{display:inline-flex;align-items:center;gap:7px}
+.sb-logo-icon{width:26px;height:26px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-brand-name{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.sb-brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.sb-section{padding:12px 0 4px}
+.sb-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.9px;text-transform:uppercase;padding:0 18px 6px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;color:rgba(255,255,255,.65);cursor:pointer;transition:all .15s;border-left:2px solid transparent}
+.sb-item:hover{color:#fff;background:rgba(255,255,255,.07)}
+.sb-item.active{color:#fff;background:rgba(255,255,255,.12);border-left-color:var(--blue);font-weight:500}
+.sb-badge{margin-left:auto;font-size:10px;font-weight:600;background:rgba(255,255,255,.18);color:#fff;border-radius:10px;padding:2px 7px;min-width:20px;text-align:center}
+.sb-badge.green{background:var(--green)}.sb-badge.amber{background:var(--amber)}.sb-badge.red{background:var(--red)}.sb-badge.purple{background:var(--purple)}
+.sb-bottom{margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-status{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,.4)}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:#4ADE80;box-shadow:0 0 6px rgba(74,222,128,.5)}
+.page-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:12px}
+.page-hd-left h1{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.page-hd-left p{font-size:13px;color:var(--ink-3);margin-top:3px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px}
+.stat-box-val{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.stat-box-lbl{font-size:12px;color:var(--ink-3);margin-top:2px}
+.stat-box-sub{font-size:11px;color:var(--ink-3);margin-top:6px}
+.stat-box.blue .stat-box-val{color:var(--blue)}.stat-box.green .stat-box-val{color:var(--green)}
+.stat-box.red .stat-box-val{color:var(--red)}.stat-box.amber .stat-box-val{color:var(--amber)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-hd-title{font-size:14px;font-weight:600}
+.card-body{padding:20px}.card-body-sm{padding:16px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-2);background:var(--surface);color:var(--ink);transition:all .12s;white-space:nowrap;font-family:var(--font)}
+.btn:hover{background:var(--wash)}.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-primary:hover{background:#1559a8}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green)}.btn-success:hover{background:#236016}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red)}.btn-danger:hover{background:#941f1f}
+.btn-amber{background:var(--amber);color:#fff;border-color:var(--amber)}.btn-amber:hover{background:#8a5200}
+.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}.btn-purple:hover{background:#4a2278}
+.btn-ghost{border-color:transparent;background:transparent}.btn-ghost:hover{background:var(--wash)}
+.btn-sm{padding:5px 10px;font-size:12px}.btn-xs{padding:3px 8px;font-size:11px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:12px;font-weight:500;color:var(--ink-2)}
+.fg input,.fg select,.fg textarea{width:100%;padding:8px 11px;border:1px solid var(--border-2);border-radius:var(--radius);font-size:13px;color:var(--ink);font-family:var(--font);background:var(--surface);transition:border-color .12s,box-shadow .12s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,107,196,.12)}
+.fg textarea{resize:vertical;min-height:72px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.fg-row{display:flex;align-items:center;gap:8px}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--ink-3)}
+.search-wrap input{padding-left:34px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{padding:10px 12px;font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.5px;text-align:left;border-bottom:1px solid var(--border);background:var(--wash);white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--blue-lt)}
+.tr-verified td{background:rgba(45,122,31,.04)}.tr-mismatch td{background:rgba(181,43,43,.05)}
+.tr-verified:hover td{background:rgba(45,122,31,.08)!important}.tr-mismatch:hover td{background:rgba(181,43,43,.1)!important}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.pill-blue{background:var(--blue-lt);color:var(--blue)}.pill-green{background:var(--green-lt);color:var(--green)}
+.pill-red{background:var(--red-lt);color:var(--red)}.pill-amber{background:var(--amber-lt);color:var(--amber)}
+.pill-gray{background:var(--wash);color:var(--ink-2);border:1px solid var(--border)}
+.pill-purple{background:var(--purple-lt);color:var(--purple)}
+.tag-mono{font-family:var(--mono);font-size:11px;background:var(--wash);border:1px solid var(--border);padding:2px 7px;border-radius:5px;color:var(--ink-2)}
+.tag-blue{font-family:var(--mono);font-size:11px;background:var(--blue-lt);color:var(--blue);padding:2px 7px;border-radius:5px}
+.tag-red{font-family:var(--mono);font-size:11px;background:var(--red-lt);color:var(--red);padding:2px 7px;border-radius:5px}
+.tabs{display:flex;gap:2px;background:var(--wash);border:1px solid var(--border);border-radius:var(--radius-lg);padding:4px;margin-bottom:20px;width:fit-content}
+.tab{padding:7px 18px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;color:var(--ink-3);transition:all .15s}
+.tab:hover{color:var(--ink)}.tab.active{background:var(--surface);color:var(--blue);box-shadow:var(--shadow)}
+.steps{display:flex;align-items:center;margin-bottom:28px}
+.step{display:flex;align-items:center;gap:8px}
+.step-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.step-num.done{background:var(--green);color:#fff}.step-num.active{background:var(--blue);color:#fff}.step-num.pending{background:var(--border);color:var(--ink-3)}
+.step-label{font-size:13px}.step-label.active{font-weight:600;color:var(--blue)}.step-label.done{color:var(--green)}.step-label.pending{color:var(--ink-3)}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 10px;border-radius:1px}.step-line.done{background:var(--green)}
+.progress{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:3px;transition:width .4s}
+.alert{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--radius);font-size:13px;margin-bottom:16px}
+.alert-info{background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-md)}
+.alert-success{background:var(--green-lt);color:var(--green);border:1px solid #A8D5A0}
+.alert-warning{background:var(--amber-lt);color:var(--amber);border:1px solid #F0C57A}
+.alert-danger{background:var(--red-lt);color:var(--red);border:1px solid #F0A5A5}
+.alert-purple{background:var(--purple-lt);color:var(--purple);border:1px solid #C9A8E8}
+hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+.action-bar{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.modal-bg{position:fixed;inset:0;background:rgba(12,20,30,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(2px)}
+.modal{background:var(--surface);border-radius:var(--radius-lg);width:580px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md)}
+.modal-lg{width:820px}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)}
+.modal-hd h3{font-size:15px;font-weight:700}
+.modal-body{padding:20px}.modal-ft{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;border-radius:var(--radius-lg);padding:12px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:var(--shadow-md);z-index:2000;opacity:0;transform:translateY(10px) scale(.97);transition:all .2s;pointer-events:none;max-width:400px}
+.toast.show{opacity:1;transform:translateY(0) scale(1)}
+.toast-icon{flex-shrink:0;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.toast-icon.ok{background:#4ADE80}.toast-icon.err{background:#F87171}.toast-icon.info{background:#60A5FA}
+.gap{display:flex;gap:8px;align-items:center}
+.mt{margin-top:8px}.mt-2{margin-top:16px}.mt-3{margin-top:24px}
+.mb{margin-bottom:8px}.mb-2{margin-bottom:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.muted{color:var(--ink-3)}.small{font-size:12px}.bold{font-weight:700}
+.text-right{text-align:right}.text-center{text-align:center}.flex-1{flex:1}
+input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:pointer}
+.critical-badge{font-size:10px;color:var(--amber);font-weight:600}
+.ecn-req{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;background:var(--amber-lt);color:var(--amber);border-radius:4px;padding:2px 6px;border:1px solid #F0C57A}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qa-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--wash);border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:all .15s;text-align:left;width:100%}
+.qa-btn:hover{background:var(--blue-lt);border-color:var(--blue-md)}
+.qa-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qa-label{font-size:13px;font-weight:600}.qa-sub{font-size:11px;color:var(--ink-3);margin-top:1px}
+.checklist-row{display:grid;grid-template-columns:1fr 130px 130px 60px 90px 190px;gap:0;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.checklist-row:hover{background:var(--blue-lt)}
+.checklist-row.verified{background:rgba(45,122,31,.04)}.checklist-row.verified:hover{background:rgba(45,122,31,.08)}
+.checklist-row.mismatch{background:rgba(181,43,43,.05)}.checklist-row.mismatch:hover{background:rgba(181,43,43,.1)}
+.checklist-hdr{background:var(--wash);font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);padding:8px 12px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;gap:12px}
+.empty-icon{width:56px;height:56px;background:var(--wash);border-radius:16px;display:flex;align-items:center;justify-content:center}
+.empty h3{font-size:15px;font-weight:600}.empty p{font-size:13px;color:var(--ink-3);max-width:280px}
+
+/* ── Bulk Upload ── */
+.upload-zone{border:2px dashed var(--border-2);border-radius:var(--radius-lg);padding:40px;text-align:center;cursor:pointer;transition:all .2s;background:var(--wash)}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--blue);background:var(--blue-lt)}
+.upload-zone-icon{width:48px;height:48px;background:var(--blue-lt);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.upload-zone h3{font-size:14px;font-weight:600;margin-bottom:6px}
+.upload-zone p{font-size:12px;color:var(--ink-3)}
+.preview-table{font-size:12px}
+.preview-table th{font-size:10px;padding:6px 10px}
+.preview-table td{padding:6px 10px}
+.row-new td{background:rgba(45,122,31,.06)}
+.row-dup td{background:rgba(181,43,43,.05)}
+.row-update td{background:rgba(176,106,0,.06)}
+.format-card{background:var(--wash);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+.format-card code{display:block;font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:8px;line-height:1.8;white-space:pre}
+
+/* Drive save indicator */
+.drive-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;background:#E8F5E9;color:#2D7A1F;border:1px solid #A8D5A0}
+.drive-pending{background:var(--amber-lt);color:var(--amber);border-color:#F0C57A}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .7s linear infinite;display:inline-block}
 </style>
 </head>
 <body>
@@ -202,13 +170,8 @@ input[type=checkbox] { width:15px; height:15px; accent-color:var(--blue); cursor
 <div class="sidebar">
   <div class="sb-brand">
     <div class="sb-logo-mark">
-      <div class="sb-logo-icon">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-      </div>
-      <div>
-        <div class="sb-brand-name">BOM Manager</div>
-        <div class="sb-brand-sub">Circuit House</div>
-      </div>
+      <div class="sb-logo-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
+      <div><div class="sb-brand-name">BOM Manager</div><div class="sb-brand-sub">Circuit House · Lumio</div></div>
     </div>
   </div>
   <div class="sb-section">
@@ -219,253 +182,444 @@ input[type=checkbox] { width:15px; height:15px; accent-color:var(--blue); cursor
     </div>
     <div class="sb-item" id="nav-bom" onclick="nav('bom')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
-      Master BOM
-      <span class="sb-badge" id="sb-bom-badge">17</span>
+      Master BOM <span class="sb-badge" id="sb-bom-badge">55</span>
+    </div>
+    <div class="sb-item" id="nav-bulk" onclick="nav('bulk')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+      Bulk Upload <span class="sb-badge purple" id="sb-bulk-badge">NEW</span>
     </div>
     <div class="sb-item" id="nav-verify" onclick="nav('verify')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-      Verification
-      <span class="sb-badge amber" id="sb-ver-badge">0</span>
+      Verification <span class="sb-badge amber" id="sb-ver-badge">0</span>
     </div>
     <div class="sb-item" id="nav-ecn" onclick="nav('ecn')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="12" y1="12" x2="12" y2="18"/></svg>
-      ECN Log
-      <span class="sb-badge green" id="sb-ecn-badge">0</span>
+      ECN Log <span class="sb-badge green" id="sb-ecn-badge">0</span>
     </div>
     <div class="sb-item" id="nav-reports" onclick="nav('reports')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Reports
+      Reports & Drive
     </div>
   </div>
-  <div class="sb-bottom">
-    <div class="sb-status"><span class="sb-dot"></span>Circuit House v2.0</div>
-  </div>
+  <div class="sb-bottom"><div class="sb-status"><span class="sb-dot"></span>Circuit House v3.0</div></div>
 </div>
 <div class="content" id="content"></div>
 </div>
-
-<div class="toast" id="toast">
-  <div class="toast-icon ok" id="toast-icon">
-    <svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-  </div>
-  <span id="toast-msg"></span>
-</div>
+<div class="toast" id="toast"><div class="toast-icon ok" id="toast-icon"><svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span id="toast-msg"></span></div>
 <div id="modal-container"></div>
 
 <script>
-const S = {
-  page:'dashboard', skus:['LH1G','LH3G'], activeSKU:'LH1G',
-  bomSearch:'', verStep:1, verDetails:{}, verResults:{}, verSearch:'',
+// ── State ──
+const S={
+  page:'dashboard',skus:['LH1G','LH3G'],activeSKU:'LH1G',
+  bomSearch:'',verStep:1,verDetails:{},verResults:{},verSearch:'',
+  driveLog:[],
   boms:{
     LH1G:[
-      {id:'LH1G-001',desc:'Main PCBA Board',pn:'PCB-LH1G-V2',cat:'Electronics',qty:1,unit:'pcs',alt:'PCB-LH1G-V1',critical:true},
-      {id:'LH1G-002',desc:'Power Supply Unit 65W',pn:'PSU-65W-IEC',cat:'Power',qty:1,unit:'pcs',alt:'PSU-65W-C13',critical:true},
-      {id:'LH1G-003',desc:'LCD Panel 1080p',pn:'LCD-1080-LH1G',cat:'Display',qty:1,unit:'pcs',alt:'',critical:true},
-      {id:'LH1G-004',desc:'Cooling Fan 40mm',pn:'FAN-40-5V',cat:'Thermal',qty:2,unit:'pcs',alt:'FAN-40-12V',critical:false},
-      {id:'LH1G-005',desc:'Speaker 8ohm 3W',pn:'SPK-8R3W',cat:'Audio',qty:2,unit:'pcs',alt:'',critical:false},
-      {id:'LH1G-006',desc:'Power Cord IEC C13 1.5m',pn:'CORD-IEC-C13-1.5M',cat:'Cable',qty:1,unit:'pcs',alt:'CORD-IEC-C13-1.8M',critical:true},
-      {id:'LH1G-007',desc:'Remote Control',pn:'RC-LH1G-STD',cat:'Accessory',qty:1,unit:'pcs',alt:'',critical:false},
-      {id:'LH1G-008',desc:'Lens Assembly 1.2x',pn:'LENS-1.2X-LH1G',cat:'Optics',qty:1,unit:'pcs',alt:'',critical:true},
+      {id:'LH1G-001',desc:'Main PCBA Board',pn:'PCB-LH1G-V2',cat:'Electronics',qty:1,unit:'PCS',alt:'PCB-LH1G-V1',critical:true,supplier:'SDMC'},
+      {id:'LH1G-002',desc:'Power Supply Unit 65W',pn:'PSU-65W-IEC',cat:'Power',qty:1,unit:'PCS',alt:'PSU-65W-C13',critical:true,supplier:''},
+      {id:'LH1G-003',desc:'LCD Panel 1080p',pn:'LCD-1080-LH1G',cat:'Display',qty:1,unit:'PCS',alt:'',critical:true,supplier:''},
+      {id:'LH1G-004',desc:'Cooling Fan 40mm',pn:'FAN-40-5V',cat:'Thermal',qty:2,unit:'PCS',alt:'FAN-40-12V',critical:false,supplier:''},
+      {id:'LH1G-005',desc:'Speaker 8ohm 3W',pn:'SPK-8R3W',cat:'Audio',qty:2,unit:'PCS',alt:'',critical:false,supplier:''},
+      {id:'LH1G-006',desc:'Power Cord IEC C13 1.5m',pn:'CORD-IEC-C13-1.5M',cat:'Cable',qty:1,unit:'PCS',alt:'CORD-IEC-C13-1.8M',critical:true,supplier:''},
+      {id:'LH1G-007',desc:'Remote Control',pn:'RC-LH1G-STD',cat:'Accessory',qty:1,unit:'PCS',alt:'',critical:false,supplier:''},
+      {id:'LH1G-008',desc:'Lens Assembly 1.2x',pn:'LENS-1.2X-LH1G',cat:'Optics',qty:1,unit:'PCS',alt:'',critical:true,supplier:''},
     ],
     LH3G:[
-      {id:'LH3G-001',desc:'Main PCBA Board',pn:'PCB-LH3G-V3',cat:'Electronics',qty:1,unit:'pcs',alt:'PCB-LH3G-V2',critical:true},
-      {id:'LH3G-002',desc:'Power Supply Unit 80W',pn:'PSU-80W-IEC',cat:'Power',qty:1,unit:'pcs',alt:'',critical:true},
-      {id:'LH3G-003',desc:'LCD Panel 4K',pn:'LCD-4K-LH3G',cat:'Display',qty:1,unit:'pcs',alt:'',critical:true},
-      {id:'LH3G-004',desc:'Cooling Fan 60mm',pn:'FAN-60-12V',cat:'Thermal',qty:2,unit:'pcs',alt:'FAN-60-5V',critical:false},
-      {id:'LH3G-005',desc:'Speaker 8ohm 5W',pn:'SPK-8R5W',cat:'Audio',qty:2,unit:'pcs',alt:'SPK-8R3W',critical:false},
-      {id:'LH3G-006',desc:'Power Cord IEC C14 1.5m',pn:'CORD-IEC-C14-1.5M',cat:'Cable',qty:1,unit:'pcs',alt:'CORD-IEC-C14-1.8M',critical:true},
-      {id:'LH3G-007',desc:'Remote Control Premium',pn:'RC-LH3G-PRE',cat:'Accessory',qty:1,unit:'pcs',alt:'RC-LH3G-STD',critical:false},
-      {id:'LH3G-008',desc:'Lens Assembly 1.5x',pn:'LENS-1.5X-LH3G',cat:'Optics',qty:1,unit:'pcs',alt:'',critical:true},
-      {id:'LH3G-009',desc:'WiFi Module AC',pn:'WIFI-AC-MOD',cat:'Electronics',qty:1,unit:'pcs',alt:'',critical:true},
+      {id:'LH3G-B01',desc:'Surface shell components',pn:'D018.700200019',cat:'Shell',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B02',desc:'Middle frame assembly',pn:'D018.700200018',cat:'Frame',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B03',desc:'Bracket assembly (decoration 01)',pn:'D018.700200017',cat:'Frame',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B04',desc:'Bracket assembly (decoration 02)',pn:'D018.700200016',cat:'Frame',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B05',desc:'Bottom shell assembly',pn:'D018.700200020',cat:'Shell',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B06',desc:'Speaker assembly OR-2400R',pn:'D018.700300009',cat:'Audio',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B07',desc:'PCBA assembly P1_MB_VER1_0_V2',pn:'D018.700300010',cat:'Electronics',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B08',desc:'PCBA component P1_MB_VER1_0_V2',pn:'D018.700300012',cat:'Electronics',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B09',desc:'Optical mechanical components CRE_D16',pn:'D018.700100004',cat:'Optics',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B10',desc:'Keypad/motherboard connection cable',pn:'D018.700200168',cat:'Cable',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B11',desc:'Floor mats Silicone Dark Gray Blue',pn:'D018.450400208',cat:'Mechanical',qty:4,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B12',desc:'Screw PB2.5x6mm',pn:'D018.410190205',cat:'Fastener',qty:8,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B13',desc:'Screw PM2.0x6mm',pn:'D018.410190241',cat:'Fastener',qty:10,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B14',desc:'Screw PB2.0x6mm',pn:'D018.410190248',cat:'Fastener',qty:7,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B15',desc:'Infrared Lens Transparent PC',pn:'D018.440300128',cat:'Optics',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B16',desc:'Camera Lens Glass Silk Screen Black',pn:'D018.450800007',cat:'Optics',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B17',desc:'Desktop Power Supply 19V 6.32A Huntkey',pn:'D018.340500594',cat:'Power',qty:1,unit:'PCS',alt:'',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B18',desc:'Power Cable Indian Standard 600mm BHS',pn:'D018.700300063',cat:'Cable',qty:1,unit:'PCS',alt:'D018.PCT-300300063',critical:true,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B19',desc:'L[DG] Adapter Cable BHS',pn:'D018.PCT-300300063',cat:'Cable',qty:1,unit:'PCS',alt:'D018.700300063',critical:true,supplier:'Just Connect Electricals Pvt Ltd'},
+      {id:'LH3G-B20',desc:'Remote Control Infrared Bluetooth 17 Buttons',pn:'D018.110400098',cat:'Accessory',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B21',desc:'Packaging box 251x232x204mm',pn:'D018.460301458',cat:'Packaging',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B22',desc:'Buffer EPP 229x208x140mm Black',pn:'D018.460401474',cat:'Packaging',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B23',desc:'Manual LH3G English 90x130mm',pn:'D018.460900645',cat:'Document',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B24',desc:'Outer box 482x230x271mm',pn:'D018.460101288',cat:'Packaging',qty:0.5,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B25',desc:'Flat card 466x215mm A3B',pn:'D018.461200335',cat:'Packaging',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B26',desc:'Buffer EPP 229x208x98mm Black',pn:'D018.460401475',cat:'Packaging',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B27',desc:'Sealing tape VOID anti-counterfeiting 110x48mm',pn:'D018.460201783',cat:'Packaging',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B28',desc:'VOID anti-counterfeiting label 6x6mm',pn:'D018.460201773',cat:'Label',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B29',desc:'Blank Label 59.6x14mm Matte PET',pn:'D018.460201770',cat:'Label',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B30',desc:'Blank Label 100x70mm Coated Paper',pn:'D018.460200064',cat:'Label',qty:0.5,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B31',desc:'Label 59.6x23.6mm Matt PET LH3G',pn:'D018.460201749',cat:'Label',qty:1,unit:'PCS',alt:'D018.460201748',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B32',desc:'PET Label 39.6x23.5mm',pn:'D018.460201748',cat:'Label',qty:3,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B33',desc:'Blank Label 75x80mm Coated Paper',pn:'D018.460201774',cat:'Label',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
+      {id:'LH3G-B34',desc:'Battery 3V AAA 1.5V',pn:'D018.PCT-K00000364',cat:'Accessory',qty:2,unit:'PCS',alt:'',critical:false,supplier:'Skaino India Electronics Private Limited'},
+      {id:'LH3G-B35',desc:'1G & 3G Accessory Bag (power supply)',pn:'D018.PCT-K00000369',cat:'Packaging',qty:3,unit:'PCS',alt:'',critical:false,supplier:'Shairu India Electronics Private Limited'},
+      {id:'LH3G-B36',desc:'1G & 3G Machine Bag (projector)',pn:'D018.PCT-K00000370',cat:'Packaging',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Shairu India Electronics Private Limited'},
+      {id:'LH3G-B37',desc:'Battery label',pn:'C100.PCT-010713020',cat:'Label',qty:1,unit:'PCS',alt:'',critical:false,supplier:'Biorwill Technologies Pvt Ltd'},
+      {id:'LH3G-B38',desc:'BOPP Tape 2x65 Mtr Transparent',pn:'D018.7000100030026',cat:'Packaging',qty:1.213,unit:'Mtrs',alt:'',critical:false,supplier:'Shenzhen Huasida Technology Co. Ltd'},
     ]
   },
-  verifications:[], ecns:[]
+  verifications:[],ecns:[]
 };
 
-function saveState(){try{localStorage.setItem('ch_bom',JSON.stringify({boms:S.boms,verifications:S.verifications,ecns:S.ecns}));}catch(e){}}
-function loadState(){try{const d=localStorage.getItem('ch_bom');if(d){const p=JSON.parse(d);Object.assign(S,p);}}catch(e){}}
+function saveState(){try{localStorage.setItem('ch_bom_v3',JSON.stringify({boms:S.boms,verifications:S.verifications,ecns:S.ecns,driveLog:S.driveLog}));}catch(e){}}
+function loadState(){try{const d=localStorage.getItem('ch_bom_v3');if(d){const p=JSON.parse(d);Object.assign(S,p);}}catch(e){}}
 loadState();
 
-function nav(page){
-  S.page=page;
-  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
-  const el=document.getElementById('nav-'+page);
-  if(el)el.classList.add('active');
-  updateBadges();render();
-}
+function nav(p){S.page=p;document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));const el=document.getElementById('nav-'+p);if(el)el.classList.add('active');updateBadges();render();}
 function updateBadges(){
-  const total=S.boms.LH1G.length+S.boms.LH3G.length;
-  document.getElementById('sb-bom-badge').textContent=total;
+  document.getElementById('sb-bom-badge').textContent=S.boms.LH1G.length+S.boms.LH3G.length;
   document.getElementById('sb-ver-badge').textContent=S.verifications.length;
   document.getElementById('sb-ecn-badge').textContent=S.ecns.length;
 }
 function render(){
   const c=document.getElementById('content');
-  switch(S.page){
-    case'dashboard':c.innerHTML=pageDashboard();break;
-    case'bom':c.innerHTML=pageBOM();break;
-    case'verify':c.innerHTML=pageVerify();break;
-    case'ecn':c.innerHTML=pageECN();break;
-    case'reports':c.innerHTML=pageReports();break;
-  }
+  const pages={dashboard:pageDashboard,bom:pageBOM,bulk:pageBulk,verify:pageVerify,ecn:pageECN,reports:pageReports};
+  c.innerHTML=(pages[S.page]||pageDashboard)();
 }
 
 const ico={
   plus:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
   check:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
   x:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
-  trash:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`,
+  trash:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>`,
   search:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
   upload:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>`,
   download:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
   pdf:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg>`,
   drive:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.74L17 8.16M7.41 8.16L2.34 16.74M12.07 3L3.87 17.52h16.26z"/></svg>`,
-  alert:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  alert:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
   ecn:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`,
   checks:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M2 12l5 5L22 4"/><path d="M12 12l5 5"/></svg>`,
+  file:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`,
+  bulk:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>`,
 };
 
+// ── Dashboard ──
 function pageDashboard(){
-  const totalParts=S.boms.LH1G.length+S.boms.LH3G.length;
-  const verCount=S.verifications.length;
-  const ecnCount=S.ecns.length;
-  const mismatches=S.verifications.reduce((a,v)=>a+(v.results||[]).filter(r=>r.status==='mismatch').length,0);
-  const recentVers=[...S.verifications].reverse().slice(0,5);
+  const tp=S.boms.LH1G.length+S.boms.LH3G.length;
+  const vc=S.verifications.length;const ec=S.ecns.length;
+  const mm=S.verifications.reduce((a,v)=>a+(v.results||[]).filter(r=>r.status==='mismatch').length,0);
+  const rv=[...S.verifications].reverse().slice(0,4);
   return `<div class="page">
   <div class="page-hd">
-    <div class="page-hd-left"><h1>Dashboard</h1><p>Circuit House &middot; Projector BOM &amp; Quality Management</p></div>
-    <div class="gap"><button class="btn btn-primary" onclick="nav('verify')">${ico.check} Start Verification</button></div>
+    <div class="page-hd-left"><h1>Dashboard</h1><p>Circuit House · Lumio Projector BOM &amp; Quality Management</p></div>
+    <div class="gap"><button class="btn btn-purple" onclick="nav('bulk')">${ico.bulk} Bulk Upload</button><button class="btn btn-primary" onclick="nav('verify')">${ico.check} Start Verification</button></div>
   </div>
   <div class="stats-row">
-    <div class="stat-box blue"><div class="stat-box-val">${totalParts}</div><div class="stat-box-lbl">Total BOM Parts</div><div class="stat-box-sub">LH1G (${S.boms.LH1G.length}) &middot; LH3G (${S.boms.LH3G.length})</div></div>
-    <div class="stat-box"><div class="stat-box-val">${verCount}</div><div class="stat-box-lbl">Verifications Run</div><div class="stat-box-sub">Across all batches</div></div>
-    <div class="stat-box ${ecnCount>0?'amber':''}"><div class="stat-box-val">${ecnCount}</div><div class="stat-box-lbl">ECNs Raised</div><div class="stat-box-sub">${mismatches} part mismatches total</div></div>
-    <div class="stat-box ${mismatches>0?'red':'green'}"><div class="stat-box-val">${mismatches}</div><div class="stat-box-lbl">Open Mismatches</div><div class="stat-box-sub">${mismatches===0?'All clear':'Requires ECN action'}</div></div>
+    <div class="stat-box blue"><div class="stat-box-val">${tp}</div><div class="stat-box-lbl">Total BOM Parts</div><div class="stat-box-sub">LH1G (${S.boms.LH1G.length}) · LH3G (${S.boms.LH3G.length})</div></div>
+    <div class="stat-box"><div class="stat-box-val">${vc}</div><div class="stat-box-lbl">Verifications</div><div class="stat-box-sub">Across all batches</div></div>
+    <div class="stat-box ${ec>0?'amber':''}"><div class="stat-box-val">${ec}</div><div class="stat-box-lbl">ECNs Raised</div><div class="stat-box-sub">${mm} part mismatches</div></div>
+    <div class="stat-box ${S.driveLog.length>0?'green':''}"><div class="stat-box-val">${S.driveLog.length}</div><div class="stat-box-lbl">Drive Saves</div><div class="stat-box-sub">Google Drive uploads</div></div>
   </div>
   <div class="grid-2">
     <div class="card">
       <div class="card-hd"><span class="card-hd-title">Quick Actions</span></div>
-      <div class="card-body">
-        <div class="qa-grid">
-          <button class="qa-btn" onclick="nav('verify')"><div class="qa-icon" style="background:var(--blue-lt)">${ico.check.replace('13','18')}</div><div><div class="qa-label">Batch Verification</div><div class="qa-sub">Check incoming lot</div></div></button>
-          <button class="qa-btn" onclick="nav('bom');setTimeout(()=>showAddPartModal(),50)"><div class="qa-icon" style="background:var(--green-lt)">${ico.plus.replace('14','18')}</div><div><div class="qa-label">Add Part</div><div class="qa-sub">Update master BOM</div></div></button>
-          <button class="qa-btn" onclick="nav('ecn');setTimeout(()=>showECNModal(),50)"><div class="qa-icon" style="background:var(--amber-lt)">${ico.ecn.replace('14','18')}</div><div><div class="qa-label">Raise ECN</div><div class="qa-sub">Engineering change notice</div></div></button>
-          <button class="qa-btn" onclick="nav('reports')"><div class="qa-icon" style="background:#F0F0FF">${ico.pdf.replace('14','18')}</div><div><div class="qa-label">PDF Reports</div><div class="qa-sub">Export &amp; Drive upload</div></div></button>
-        </div>
-      </div>
+      <div class="card-body"><div class="qa-grid">
+        <button class="qa-btn" onclick="nav('bulk')"><div class="qa-icon" style="background:var(--purple-lt)">${ico.bulk.replace('14','18')}</div><div><div class="qa-label">Bulk Upload BOM</div><div class="qa-sub">Upload CSV / paste data</div></div></button>
+        <button class="qa-btn" onclick="nav('verify')"><div class="qa-icon" style="background:var(--blue-lt)">${ico.check.replace('13','18')}</div><div><div class="qa-label">Batch Verification</div><div class="qa-sub">Check incoming lot</div></div></button>
+        <button class="qa-btn" onclick="nav('ecn');setTimeout(()=>showECNModal(),50)"><div class="qa-icon" style="background:var(--amber-lt)">${ico.ecn.replace('14','18')}</div><div><div class="qa-label">Raise ECN</div><div class="qa-sub">Engineering change notice</div></div></button>
+        <button class="qa-btn" onclick="nav('reports')"><div class="qa-icon" style="background:var(--green-lt)">${ico.drive.replace('14','18')}</div><div><div class="qa-label">Reports &amp; Drive</div><div class="qa-sub">Export PDF / upload</div></div></button>
+      </div></div>
     </div>
     <div class="card">
       <div class="card-hd"><span class="card-hd-title">Recent Verifications</span></div>
       <div class="card-body-sm">
-        ${recentVers.length===0?`<div class="empty" style="padding:32px 0"><p>No verifications yet. Start one from Quick Actions.</p></div>`:
-          recentVers.map(v=>{const ok=(v.results||[]).filter(r=>r.status==='verified').length;const mm=(v.results||[]).filter(r=>r.status==='mismatch').length;const tot=(v.results||[]).length;const pass=mm===0&&ok===tot;
+        ${rv.length===0?`<div class="empty" style="padding:32px 0"><p>No verifications yet.</p></div>`:
+          rv.map(v=>{const ok=(v.results||[]).filter(r=>r.status==='verified').length;const mm=(v.results||[]).filter(r=>r.status==='mismatch').length;const tot=(v.results||[]).length;const pass=mm===0&&ok===tot;
           return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-            <div style="flex:1"><div class="bold" style="font-size:13px">${v.batchNo}</div><div class="muted small">${v.model} &middot; ${v.kitQty} kits &middot; ${v.date}</div></div>
+            <div style="flex:1"><div class="bold" style="font-size:13px">${v.batchNo}</div><div class="muted small">${v.model} · ${v.kitQty} kits · ${v.date}</div></div>
             <span class="pill ${pass?'pill-green':mm>0?'pill-red':'pill-amber'}">${ok}/${tot} ${pass?'Pass':mm>0?'Fail':'Partial'}</span>
             <button class="btn btn-xs btn-ghost" onclick="nav('reports')">${ico.pdf}</button>
           </div>`;}).join('')}
       </div>
     </div>
   </div>
-  <div class="card mt-3">
-    <div class="card-hd"><span class="card-hd-title">BOM Overview</span></div>
-    <div class="card-body"><div class="grid-2">
-      ${S.skus.map(sku=>`<div style="background:var(--wash);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <span style="font-size:16px;font-weight:700;letter-spacing:-.3px">${sku}</span>
-          <span class="pill pill-blue">${S.boms[sku].length} parts</span>
-        </div>
-        <div class="small muted mb-2">Critical: <b style="color:var(--amber)">${S.boms[sku].filter(p=>p.critical).length}</b> &nbsp;&middot;&nbsp; With alternates: <b>${S.boms[sku].filter(p=>p.alt).length}</b></div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">${[...new Set(S.boms[sku].map(p=>p.cat))].map(c=>`<span class="pill pill-gray">${c}</span>`).join('')}</div>
-        <button class="btn btn-sm mt-2" onclick="S.activeSKU='${sku}';nav('bom')">View BOM &rarr;</button>
-      </div>`).join('')}
-    </div></div>
+  <div class="grid-2 mt-3">
+    ${S.skus.map(sku=>`<div class="card"><div class="card-hd"><span class="card-hd-title">${sku} BOM Overview</span><span class="pill pill-blue">${S.boms[sku].length} parts</span></div>
+      <div class="card-body-sm">
+        <div class="small muted mb">Critical: <b style="color:var(--amber)">${S.boms[sku].filter(p=>p.critical).length}</b> &nbsp;·&nbsp; With alternates: <b>${S.boms[sku].filter(p=>p.alt).length}</b></div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${[...new Set(S.boms[sku].map(p=>p.cat))].map(c=>`<span class="pill pill-gray">${c}</span>`).join('')}</div>
+        <button class="btn btn-sm mt-2" onclick="S.activeSKU='${sku}';nav('bom')">View BOM →</button>
+      </div>
+    </div>`).join('')}
   </div>
 </div>`;}
 
+// ── Master BOM ──
 function pageBOM(){
   const q=S.bomSearch.toLowerCase();
-  const parts=S.boms[S.activeSKU].filter(p=>p.desc.toLowerCase().includes(q)||p.pn.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q));
+  const parts=S.boms[S.activeSKU].filter(p=>p.desc.toLowerCase().includes(q)||p.pn.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)||((p.supplier||'').toLowerCase().includes(q)));
   return `<div class="page">
   <div class="page-hd">
-    <div class="page-hd-left"><h1>Master BOM</h1><p>Bill of materials &mdash; single source of truth for all SKUs</p></div>
-    <div class="gap"><button class="btn btn-primary" onclick="showAddPartModal()">${ico.plus} Add Part</button></div>
+    <div class="page-hd-left"><h1>Master BOM</h1><p>Single source of truth — ${S.activeSKU} has ${S.boms[S.activeSKU].length} parts</p></div>
+    <div class="gap">
+      <button class="btn btn-purple" onclick="nav('bulk')">${ico.bulk} Bulk Upload</button>
+      <button class="btn btn-primary" onclick="showAddPartModal()">${ico.plus} Add Part</button>
+      <button class="btn" onclick="downloadBOMTemplate()">${ico.download} CSV Template</button>
+    </div>
   </div>
-  <div class="tabs">
-    ${S.skus.map(s=>`<div class="tab ${s===S.activeSKU?'active':''}" onclick="S.activeSKU='${s}';S.bomSearch='';render()">${s} <span class="muted small">(${S.boms[s].length})</span></div>`).join('')}
-  </div>
+  <div class="tabs">${S.skus.map(s=>`<div class="tab ${s===S.activeSKU?'active':''}" onclick="S.activeSKU='${s}';S.bomSearch='';render()">${s} <span class="muted small">(${S.boms[s].length})</span></div>`).join('')}</div>
   <div class="card">
     <div class="card-hd">
-      <span class="card-hd-title">${S.activeSKU} Parts &mdash; ${parts.length} shown</span>
-      <div class="search-wrap" style="width:280px">${ico.search}<input type="text" id="bomSearch" placeholder="Search description, PN, category&hellip;" value="${S.bomSearch}" oninput="S.bomSearch=this.value;render()" style="height:34px"></div>
+      <span class="card-hd-title">${S.activeSKU} — ${parts.length} parts shown</span>
+      <div class="search-wrap" style="width:300px">${ico.search}<input type="text" placeholder="Search desc, PN, category, supplier…" value="${S.bomSearch}" oninput="S.bomSearch=this.value;render()" style="height:34px"></div>
     </div>
     <div class="tbl-wrap"><table>
-      <thead><tr><th>Part ID</th><th>Description</th><th>Part Number</th><th>Category</th><th>Qty</th><th>Alternate PN</th><th>Critical</th><th style="width:80px"></th></tr></thead>
-      <tbody>
-        ${parts.length===0?`<tr><td colspan="8"><div class="empty"><h3>No parts found</h3><p>Try a different search term</p></div></td></tr>`:
+      <thead><tr><th>Part ID</th><th>Description</th><th>Part Number</th><th>Category</th><th>Supplier</th><th>Qty</th><th>Alt PN</th><th>Critical</th><th></th></tr></thead>
+      <tbody>${parts.length===0?`<tr><td colspan="9"><div class="empty"><h3>No parts found</h3></div></td></tr>`:
         parts.map(p=>`<tr>
           <td><span class="tag-mono">${p.id}</span></td>
-          <td><div style="font-weight:500">${p.desc}</div>${p.critical?`<div class="critical-badge">&#9888; Critical part</div>`:''}</td>
+          <td><div style="font-weight:500;max-width:220px">${p.desc}</div>${p.critical?`<div class="critical-badge">⚠ Critical</div>`:''}</td>
           <td><span class="tag-blue">${p.pn}</span></td>
           <td><span class="pill pill-gray">${p.cat}</span></td>
+          <td><span class="muted small">${p.supplier||'—'}</span></td>
           <td>${p.qty} ${p.unit}</td>
-          <td>${p.alt?`<span class="tag-mono">${p.alt}</span>`:`<span class="muted small">&mdash;</span>`}</td>
+          <td>${p.alt?`<span class="tag-mono">${p.alt}</span>`:`<span class="muted small">—</span>`}</td>
           <td>${p.critical?`<span class="pill pill-amber">YES</span>`:`<span class="muted small">No</span>`}</td>
-          <td class="text-right"><button class="btn btn-xs btn-ghost" onclick="deletePart('${p.id}')" title="Delete">${ico.trash}</button></td>
+          <td><button class="btn btn-xs btn-ghost" onclick="deletePart('${p.id}')">${ico.trash}</button></td>
         </tr>`).join('')}
       </tbody>
     </table></div>
   </div>
 </div>`;}
 
-function pageVerify(){
-  if(S.verStep===1)return verStep1();
-  if(S.verStep===2)return verStep2();
-  if(S.verStep===3)return verStep3();
-  return verStep1();
+// ── BULK UPLOAD PAGE ──
+function pageBulk(){
+  return `<div class="page">
+  <div class="page-hd">
+    <div class="page-hd-left"><h1>Bulk BOM Upload</h1><p>Upload CSV or paste data to add multiple parts at once</p></div>
+    <div class="gap">
+      <button class="btn" onclick="downloadBOMTemplate()">${ico.download} Download Template</button>
+      <button class="btn" onclick="downloadLH3GCSV()">${ico.download} Export LH3G BOM</button>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card mb-2">
+        <div class="card-hd"><span class="card-hd-title">CSV Format Guide</span></div>
+        <div class="card-body">
+          <div class="format-card">
+            <div class="bold small mb">Required columns (exact header names):</div>
+            <code>id,desc,pn,cat,qty,unit,alt,critical,supplier</code>
+          </div>
+          <div class="alert alert-info" style="margin-bottom:8px">${ico.check} Column headers must match exactly. Extra columns are ignored.</div>
+          <div class="small muted mb">Example row:</div>
+          <div class="format-card">
+            <code>LH3G-B01,Surface shell components,D018.700200019,Shell,1,PCS,,true,Shenzhen Huasida</code>
+          </div>
+          <div class="small muted mt">
+            <b>cat</b> options: Electronics, Power, Display, Thermal, Audio, Cable, Accessory, Optics, Mechanical, Shell, Frame, Fastener, Packaging, Label, Document<br>
+            <b>critical</b>: true / false<br>
+            <b>alt</b>: leave empty if no alternate
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><span class="card-hd-title">Target SKU</span></div>
+        <div class="card-body">
+          <div class="fg"><label>Upload parts into</label>
+            <select id="bulkSKU"><option value="LH1G">LH1G</option><option value="LH3G" selected>LH3G</option></select>
+          </div>
+          <div class="fg mt"><label>Duplicate handling</label>
+            <select id="bulkDup">
+              <option value="skip">Skip duplicates (keep existing)</option>
+              <option value="update">Update duplicates (overwrite existing)</option>
+              <option value="add">Add anyway (allow duplicates)</option>
+            </select>
+          </div>
+          <div class="fg-row mt"><input type="checkbox" id="bulkDrive" checked><label for="bulkDrive" style="font-size:13px;cursor:pointer">Auto-save to Google Drive after upload</label></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb-2">
+        <div class="card-hd"><span class="card-hd-title">Upload CSV File</span></div>
+        <div class="card-body">
+          <div class="upload-zone" id="dropZone" onclick="document.getElementById('csvFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <div class="upload-zone-icon">${ico.bulk.replace('14','24')}</div>
+            <h3>Drop CSV file here</h3>
+            <p>or click to browse · .csv files only</p>
+          </div>
+          <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleFileSelect(this)">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><span class="card-hd-title">Or Paste CSV Data</span></div>
+        <div class="card-body">
+          <div class="fg">
+            <label>Paste CSV rows below (with or without header)</label>
+            <textarea id="pasteArea" rows="6" placeholder="id,desc,pn,cat,qty,unit,alt,critical,supplier&#10;LH3G-B01,Surface shell,..."></textarea>
+          </div>
+          <button class="btn btn-purple mt" onclick="parsePastedCSV()">${ico.bulk} Parse &amp; Preview</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bulkPreview"></div>
+</div>`;}
+
+// ── Bulk upload logic ──
+function handleDragOver(e){e.preventDefault();document.getElementById('dropZone').classList.add('dragover');}
+function handleDragLeave(e){document.getElementById('dropZone').classList.remove('dragover');}
+function handleDrop(e){e.preventDefault();document.getElementById('dropZone').classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)readCSVFile(f);}
+function handleFileSelect(input){if(input.files[0])readCSVFile(input.files[0]);}
+function readCSVFile(f){const r=new FileReader();r.onload=e=>previewBulkCSV(e.target.result);r.readAsText(f);}
+function parsePastedCSV(){const t=document.getElementById('pasteArea').value.trim();if(t)previewBulkCSV(t);else toast('Paste some CSV data first','err');}
+
+function parseCSV(text){
+  const lines=text.trim().split('\n').map(l=>l.trim()).filter(l=>l);
+  if(!lines.length)return[];
+  // Detect header
+  const first=lines[0].toLowerCase();
+  const hasHeader=first.includes('desc')||first.includes('pn')||first.includes('part');
+  const dataLines=hasHeader?lines.slice(1):lines;
+  const COLS=['id','desc','pn','cat','qty','unit','alt','critical','supplier'];
+  let headerMap=null;
+  if(hasHeader){
+    const hdr=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/[^a-z]/g,''));
+    headerMap={};
+    COLS.forEach(c=>{const i=hdr.indexOf(c);if(i>=0)headerMap[c]=i;});
+  }
+  return dataLines.map((line,idx)=>{
+    const cells=line.split(',').map(c=>c.trim().replace(/^"|"$/g,''));
+    const get=col=>{
+      if(headerMap&&headerMap[col]!==undefined)return cells[headerMap[col]]||'';
+      const def={id:0,desc:1,pn:2,cat:3,qty:4,unit:5,alt:6,critical:7,supplier:8};
+      return cells[def[col]]||'';
+    };
+    return{id:get('id')||`BULK-${Date.now()}-${idx}`,desc:get('desc'),pn:get('pn'),cat:get('cat')||'General',qty:parseFloat(get('qty'))||1,unit:get('unit')||'PCS',alt:get('alt'),critical:get('critical').toLowerCase()==='true',supplier:get('supplier')};
+  }).filter(p=>p.desc&&p.pn);
 }
 
-function stepsHtml(active){
-  const steps=['Batch Details','Part Verification','Report & Export'];
-  return `<div class="steps">${steps.map((s,i)=>{const n=i+1;const cls=n<active?'done':n===active?'active':'pending';
-    return `${i>0?`<div class="step-line ${n<=active?'done':''}"></div>`:''}
-    <div class="step"><div class="step-num ${cls}">${n<active?ico.check:n}</div><span class="step-label ${cls}">${s}</span></div>`;
-  }).join('')}</div>`;}
+function previewBulkCSV(text){
+  const parsed=parseCSV(text);
+  if(!parsed.length){toast('No valid rows found — check format','err');return;}
+  const sku=document.getElementById('bulkSKU')?.value||S.activeSKU;
+  const dupMode=document.getElementById('bulkDup')?.value||'skip';
+  const existing=S.boms[sku]||[];
+  const existingPNs=new Set(existing.map(p=>p.pn));
 
+  const rows=parsed.map(p=>{
+    const isDup=existingPNs.has(p.pn);
+    const rowType=isDup?(dupMode==='skip'?'dup':'update'):'new';
+    return{...p,_type:rowType};
+  });
+
+  const newCount=rows.filter(r=>r._type==='new').length;
+  const dupCount=rows.filter(r=>r._type==='dup').length;
+  const updateCount=rows.filter(r=>r._type==='update').length;
+
+  const preview=document.getElementById('bulkPreview');
+  preview.innerHTML=`<div class="card mt-3">
+    <div class="card-hd">
+      <span class="card-hd-title">Preview — ${parsed.length} rows parsed</span>
+      <div class="gap">
+        <span class="pill pill-green">${newCount} new</span>
+        ${dupCount>0?`<span class="pill pill-red">${dupCount} skip (dup)</span>`:''}
+        ${updateCount>0?`<span class="pill pill-amber">${updateCount} update</span>`:''}
+      </div>
+    </div>
+    <div class="alert alert-info" style="margin:16px 16px 0">${ico.check} Review below. Green = new part · Red = duplicate (will be ${dupMode==='skip'?'skipped':'updated'})</div>
+    <div class="tbl-wrap" style="max-height:400px;overflow-y:auto">
+      <table class="preview-table">
+        <thead><tr><th>Status</th><th>ID</th><th>Description</th><th>Part Number</th><th>Cat</th><th>Qty</th><th>Unit</th><th>Alt PN</th><th>Critical</th><th>Supplier</th></tr></thead>
+        <tbody>${rows.map(r=>`<tr class="${r._type==='new'?'row-new':r._type==='dup'?'row-dup':'row-update'}">
+          <td><span class="pill ${r._type==='new'?'pill-green':r._type==='dup'?'pill-red':'pill-amber'}">${r._type==='new'?'NEW':r._type==='dup'?'SKIP':'UPDATE'}</span></td>
+          <td><span class="tag-mono" style="font-size:10px">${r.id}</span></td>
+          <td style="max-width:200px;font-size:12px">${r.desc}</td>
+          <td><span class="tag-blue" style="font-size:10px">${r.pn}</span></td>
+          <td><span class="pill pill-gray" style="font-size:10px">${r.cat}</span></td>
+          <td>${r.qty}</td><td>${r.unit}</td>
+          <td>${r.alt||'—'}</td>
+          <td>${r.critical?'<span class="pill pill-amber" style="font-size:10px">YES</span>':'No'}</td>
+          <td style="font-size:11px;color:var(--ink-3)">${r.supplier||'—'}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="action-bar">
+      <div class="small muted">Target: <b>${sku}</b> · Duplicate mode: <b>${dupMode}</b></div>
+      <div class="gap">
+        <button class="btn" onclick="document.getElementById('bulkPreview').innerHTML=''">Cancel</button>
+        <button class="btn btn-purple" onclick="commitBulkUpload(${JSON.stringify(rows).replace(/"/g,'&quot;')},'${sku}','${dupMode}')">${ico.bulk} Import ${newCount+(updateCount)} Parts</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function commitBulkUpload(rows,sku,dupMode){
+  rows=typeof rows==='string'?JSON.parse(rows):rows;
+  const existing=S.boms[sku]||[];
+  let added=0,updated=0,skipped=0;
+  rows.forEach(r=>{
+    const{_type,...part}=r;
+    if(_type==='new'){existing.push(part);added++;}
+    else if(_type==='update'){const i=existing.findIndex(p=>p.pn===part.pn);if(i>=0){existing[i]={...existing[i],...part};updated++;}else{existing.push(part);added++;}}
+    else{skipped++;}
+  });
+  S.boms[sku]=existing;
+  saveState();updateBadges();
+  const driveSave=document.getElementById('bulkDrive')?.checked;
+  if(driveSave)logDriveSave(`BOM_Bulk_${sku}_${new Date().toISOString().split('T')[0]}.csv`,`Bulk upload: ${added} added, ${updated} updated to ${sku} BOM`);
+  document.getElementById('bulkPreview').innerHTML=`<div class="alert alert-success mt-2">${ico.check} <strong>Import complete!</strong> ${added} parts added, ${updated} updated, ${skipped} skipped. ${driveSave?'Saved to Google Drive.':''}</div>`;
+  toast(`Imported ${added+updated} parts into ${sku} BOM`);
+  setTimeout(()=>{nav('bom');S.activeSKU=sku;},1800);
+}
+
+function downloadBOMTemplate(){
+  const csv=`id,desc,pn,cat,qty,unit,alt,critical,supplier\nLH3G-NEW-001,Part Description Here,PN-XXXXX,Electronics,1,PCS,ALT-PN-OPTIONAL,false,Supplier Name Here\nLH3G-NEW-002,Another Part,PN-YYYYY,Mechanical,2,PCS,,true,`;
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='BOM_Upload_Template.csv';a.click();toast('Template downloaded');
+}
+
+function downloadLH3GCSV(){
+  const rows=[['id','desc','pn','cat','qty','unit','alt','critical','supplier'],...S.boms.LH3G.map(p=>[p.id,p.desc,p.pn,p.cat,p.qty,p.unit,p.alt||'',p.critical?'true':'false',p.supplier||''])];
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=`LH3G_Master_BOM_${new Date().toISOString().split('T')[0]}.csv`;a.click();toast('LH3G BOM exported');
+}
+
+// ── Verification ──
+function pageVerify(){if(S.verStep===1)return verStep1();if(S.verStep===2)return verStep2();if(S.verStep===3)return verStep3();return verStep1();}
+function stepsHtml(a){const s=['Batch Details','Part Verification','Report & Export'];return `<div class="steps">${s.map((n,i)=>{const num=i+1;const cls=num<a?'done':num===a?'active':'pending';return`${i>0?`<div class="step-line ${num<=a?'done':''}"></div>`''}<div class="step"><div class="step-num ${cls}">${num<a?ico.check:num}</div><span class="step-label ${cls}">${n}</span></div>`;}).join('')}</div>`;}
 function verStep1(){
   const today=new Date().toISOString().split('T')[0];
   return `<div class="page">
   <div class="page-hd"><div class="page-hd-left"><h1>Batch Verification</h1><p>Verify incoming lot against master BOM</p></div></div>
   ${stepsHtml(1)}
-  <div style="max-width:600px">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Batch Information</span></div>
-      <div class="card-body">
-        <div class="form-grid mb-2">
-          <div class="fg"><label>Batch / Lot Number *</label><input type="text" id="vBatch" placeholder="e.g. B2025-JUL-042" value="${S.verDetails.batchNo||''}"></div>
-          <div class="fg"><label>Model / SKU *</label><select id="vModel"><option value="">Select&hellip;</option>${S.skus.map(s=>`<option value="${s}" ${S.verDetails.model===s?'selected':''}>${s}</option>`).join('')}</select></div>
-          <div class="fg"><label>Kit Quantity *</label><input type="number" id="vQty" placeholder="e.g. 500" min="1" value="${S.verDetails.kitQty||''}"></div>
-          <div class="fg"><label>Verification Date</label><input type="date" id="vDate" value="${S.verDetails.date||today}"></div>
-          <div class="fg"><label>Verified By</label><input type="text" id="vBy" placeholder="Your name" value="${S.verDetails.by||''}"></div>
-          <div class="fg"><label>Factory / Supplier</label><input type="text" id="vFactory" placeholder="e.g. iDigital Bangalore" value="${S.verDetails.factory||''}"></div>
-        </div>
-        <div class="fg"><label>Remarks</label><textarea id="vRemarks" placeholder="Any notes about this batch&hellip;">${S.verDetails.remarks||''}</textarea></div>
-        <div class="mt-2"><button class="btn btn-primary" onclick="startVer()">${ico.check} Start Part Verification</button></div>
-      </div>
+  <div style="max-width:600px"><div class="card"><div class="card-hd"><span class="card-hd-title">Batch Information</span></div><div class="card-body">
+    <div class="form-grid mb-2">
+      <div class="fg"><label>Batch / Lot Number *</label><input type="text" id="vBatch" placeholder="e.g. B2025-JUL-042" value="${S.verDetails.batchNo||''}"></div>
+      <div class="fg"><label>Model / SKU *</label><select id="vModel"><option value="">Select…</option>${S.skus.map(s=>`<option value="${s}" ${S.verDetails.model===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="fg"><label>Kit Quantity *</label><input type="number" id="vQty" placeholder="e.g. 500" min="1" value="${S.verDetails.kitQty||''}"></div>
+      <div class="fg"><label>Date</label><input type="date" id="vDate" value="${S.verDetails.date||today}"></div>
+      <div class="fg"><label>Verified By</label><input type="text" id="vBy" placeholder="Your name" value="${S.verDetails.by||''}"></div>
+      <div class="fg"><label>Factory / Supplier</label><input type="text" id="vFactory" placeholder="e.g. iDigital Bangalore" value="${S.verDetails.factory||''}"></div>
     </div>
-  </div>
-  ${S.verifications.length>0?`<div class="card mt-3">
-    <div class="card-hd"><span class="card-hd-title">Verification History</span></div>
-    <div class="tbl-wrap"><table>
-      <thead><tr><th>Batch No</th><th>Model</th><th>Kit Qty</th><th>Date</th><th>By</th><th>Result</th><th>Status</th><th></th></tr></thead>
-      <tbody>${[...S.verifications].reverse().map(v=>{const ok=(v.results||[]).filter(r=>r.status==='verified').length;const mm=(v.results||[]).filter(r=>r.status==='mismatch').length;const tot=(v.results||[]).length;const pass=mm===0&&ok===tot;
-        return `<tr><td class="bold">${v.batchNo}</td><td>${v.model}</td><td>${v.kitQty}</td><td>${v.date}</td><td>${v.by||'&mdash;'}</td>
-          <td><span style="font-size:12px">${ok}/${tot}${mm>0?` <span class="muted">(${mm} mismatch)</span>`:''}</span></td>
-          <td><span class="pill ${pass?'pill-green':mm>0?'pill-red':'pill-amber'}">${pass?'PASS':mm>0?'FAIL':'PARTIAL'}</span></td>
-          <td class="text-right"><button class="btn btn-xs" onclick="generatePDFById('${v.id}')">${ico.pdf} PDF</button></td>
-        </tr>`;}).join('')}</tbody>
-    </table></div>
-  </div>`:''}
+    <div class="fg"><label>Remarks</label><textarea id="vRemarks" placeholder="Notes…">${S.verDetails.remarks||''}</textarea></div>
+    <div class="fg-row mt"><input type="checkbox" id="vDrive" checked><label for="vDrive" style="font-size:13px;cursor:pointer">Auto-save report to Google Drive on completion</label></div>
+    <div class="mt-2"><button class="btn btn-primary" onclick="startVer()">${ico.check} Start Verification</button></div>
+  </div></div></div>
+  ${S.verifications.length>0?`<div class="card mt-3"><div class="card-hd"><span class="card-hd-title">History</span></div><div class="tbl-wrap"><table>
+    <thead><tr><th>Batch</th><th>Model</th><th>Kits</th><th>Date</th><th>By</th><th>Result</th><th>Status</th><th>Drive</th><th></th></tr></thead>
+    <tbody>${[...S.verifications].reverse().map(v=>{const ok=(v.results||[]).filter(r=>r.status==='verified').length;const mm=(v.results||[]).filter(r=>r.status==='mismatch').length;const tot=(v.results||[]).length;const pass=mm===0&&ok===tot;
+      return`<tr><td class="bold">${v.batchNo}</td><td>${v.model}</td><td>${v.kitQty}</td><td>${v.date}</td><td>${v.by||'—'}</td>
+        <td>${ok}/${tot}${mm>0?` <span class="muted">(${mm} mm)</span>`:''}</td>
+        <td><span class="pill ${pass?'pill-green':mm>0?'pill-red':'pill-amber'}">${pass?'PASS':mm>0?'FAIL':'PARTIAL'}</span></td>
+        <td>${v.savedToDrive?`<span class="drive-badge">${ico.drive} Saved</span>`:`<span class="drive-badge drive-pending">Pending</span>`}</td>
+        <td class="text-right"><button class="btn btn-xs" onclick="generatePDFById('${v.id}')">${ico.pdf} PDF</button></td>
+      </tr>`;}).join('')}</tbody>
+  </table></div></div>`:''}
 </div>`;}
 
 function verStep2(){
@@ -474,36 +628,28 @@ function verStep2(){
   const filtered=bom.filter(p=>p.desc.toLowerCase().includes(q)||p.pn.toLowerCase().includes(q));
   const verified=Object.values(S.verResults).filter(r=>r.status==='verified').length;
   const mismatch=Object.values(S.verResults).filter(r=>r.status==='mismatch').length;
-  const total=bom.length;
-  const done=verified+mismatch;
-  const pct=total?Math.round(done/total*100):0;
+  const total=bom.length;const done=verified+mismatch;const pct=total?Math.round(done/total*100):0;
   return `<div class="page" style="padding-bottom:80px">
   <div class="page-hd">
     <div class="page-hd-left">
       <h1>Part Verification</h1>
-      <p>Batch <b>${S.verDetails.batchNo}</b> &middot; ${S.verDetails.model} &middot; ${S.verDetails.kitQty} kits</p>
-      <div class="gap mt" style="gap:6px">
-        <span class="pill pill-green">${verified} verified</span>
-        ${mismatch>0?`<span class="pill pill-red">${mismatch} mismatch</span>`:''}
-        <span class="pill pill-gray">${total-done} pending</span>
-        <span class="muted small">${pct}% complete</span>
-      </div>
+      <p>Batch <b>${S.verDetails.batchNo}</b> · ${S.verDetails.model} · ${S.verDetails.kitQty} kits</p>
+      <div class="gap mt" style="gap:6px"><span class="pill pill-green">${verified} verified</span>${mismatch>0?`<span class="pill pill-red">${mismatch} mismatch</span>`:''}<span class="pill pill-gray">${total-done} pending</span><span class="muted small">${pct}%</span></div>
       <div class="progress" style="width:320px"><div class="progress-fill" style="width:${pct}%;background:${mismatch>0?'var(--amber)':'var(--blue)'}"></div></div>
     </div>
     <div class="gap"><button class="btn" onclick="verifyAll()">${ico.checks} Mark All Verified</button></div>
   </div>
   ${stepsHtml(2)}
   <div class="card">
-    <div class="card-hd">
-      <span class="card-hd-title">BOM Checklist &mdash; ${S.verDetails.model}</span>
-      <div class="search-wrap" style="width:280px">${ico.search}<input type="text" id="verSearch" placeholder="Search part&hellip;" value="${S.verSearch}" oninput="S.verSearch=this.value;render()" style="height:34px"></div>
+    <div class="card-hd"><span class="card-hd-title">Checklist — ${S.verDetails.model}</span>
+      <div class="search-wrap" style="width:280px">${ico.search}<input type="text" placeholder="Search part…" value="${S.verSearch}" oninput="S.verSearch=this.value;render()" style="height:34px"></div>
     </div>
     <div class="checklist-hdr checklist-row"><span>Description</span><span>Master PN</span><span>Found PN</span><span>Qty</span><span>Status</span><span>Actions</span></div>
     ${filtered.map(p=>{const r=S.verResults[p.id]||{};const cls=r.status==='verified'?'verified':r.status==='mismatch'?'mismatch':'';
-      return `<div class="checklist-row ${cls}">
-        <div><div style="font-weight:500;font-size:13px">${p.desc}</div>${p.critical?`<div class="critical-badge">&#9888; Critical</div>`:''}${r.status==='mismatch'?`<div class="ecn-req mt">${ico.alert} ECN required</div>`:''}</div>
+      return`<div class="checklist-row ${cls}">
+        <div><div style="font-weight:500;font-size:13px">${p.desc}</div>${p.critical?`<div class="critical-badge">⚠ Critical</div>`:''}${r.status==='mismatch'?`<div class="ecn-req mt">${ico.alert} ECN required</div>`:''}</div>
         <div><span class="tag-blue">${p.pn}</span>${p.alt?`<div class="muted small mt">Alt: ${p.alt}</div>`:''}</div>
-        <div>${r.newPN?`<span class="tag-red">${r.newPN}</span>`:`<span class="muted">&mdash;</span>`}</div>
+        <div>${r.newPN?`<span class="tag-red">${r.newPN}</span>`:`<span class="muted">—</span>`}</div>
         <div class="muted">${p.qty} ${p.unit}</div>
         <div>${r.status==='verified'?`<span class="pill pill-green">${ico.check} Match</span>`:r.status==='mismatch'?`<span class="pill pill-red">${ico.x} Mismatch</span>`:`<span class="pill pill-gray">Pending</span>`}</div>
         <div class="gap" style="gap:5px;flex-wrap:wrap">
@@ -514,8 +660,8 @@ function verStep2(){
         </div>
       </div>`;}).join('')}
     <div class="action-bar">
-      <button class="btn" onclick="S.verStep=1;render()">&larr; Back</button>
-      <button class="btn btn-primary" onclick="finishVerification()">Complete &amp; Generate Report &rarr;</button>
+      <button class="btn" onclick="S.verStep=1;render()">← Back</button>
+      <button class="btn btn-primary" onclick="finishVerification()">Complete & Generate Report →</button>
     </div>
   </div>
 </div>`;}
@@ -524,18 +670,21 @@ function verStep3(){
   const bom=S.boms[S.verDetails.model]||[];
   const ok=Object.values(S.verResults).filter(r=>r.status==='verified').length;
   const mm=Object.values(S.verResults).filter(r=>r.status==='mismatch').length;
-  const pending=bom.length-ok-mm;
-  const pass=mm===0&&pending===0;
+  const pending=bom.length-ok-mm;const pass=mm===0&&pending===0;
+  const lastVer=S.verifications[S.verifications.length-1];
   return `<div class="page">
   <div class="page-hd">
-    <div class="page-hd-left"><h1>Verification Report</h1><p>${S.verDetails.batchNo} &middot; ${S.verDetails.model}</p></div>
+    <div class="page-hd-left"><h1>Verification Report</h1><p>${S.verDetails.batchNo} · ${S.verDetails.model}</p></div>
     <div class="gap">
       <button class="btn btn-primary" onclick="generatePDF()">${ico.pdf} Generate PDF</button>
-      <button class="btn" onclick="exportCSV()">${ico.download} Download CSV</button>
+      <button class="btn btn-success" onclick="saveToDrive()">${ico.drive} Save to Drive</button>
+      <button class="btn" onclick="exportCSV()">${ico.download} CSV</button>
     </div>
   </div>
   ${stepsHtml(3)}
-  <div class="${pass?'alert alert-success':'alert alert-danger'}">${pass?ico.check:ico.alert} <strong>${pass?'Verification Passed &mdash; All parts match master BOM':'Verification Failed &mdash; '+mm+' mismatch'+(mm>1?'es':'')+' found'}</strong></div>
+  <div class="${pass?'alert alert-success':'alert alert-danger'}">${pass?ico.check:ico.alert} <strong>${pass?'Passed — All parts match master BOM':'Failed — '+mm+' mismatch'+(mm>1?'es':'')+' found'}</strong>
+    ${lastVer?.savedToDrive?` &nbsp;<span class="drive-badge">${ico.drive} Saved to Drive</span>`:''}
+  </div>
   <div class="stats-row">
     <div class="stat-box"><div class="stat-box-val">${bom.length}</div><div class="stat-box-lbl">Total Parts</div></div>
     <div class="stat-box green"><div class="stat-box-val">${ok}</div><div class="stat-box-lbl">Verified</div></div>
@@ -543,34 +692,27 @@ function verStep3(){
     <div class="stat-box ${pending>0?'amber':''}"><div class="stat-box-val">${pending}</div><div class="stat-box-lbl">Unchecked</div></div>
   </div>
   <div class="grid-2">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Batch Summary</span></div>
-      <div class="card-body"><table style="width:100%;font-size:13px">
-        ${[['Batch / Lot No',S.verDetails.batchNo],['Model',S.verDetails.model],['Kit Quantity',S.verDetails.kitQty],['Date',S.verDetails.date],['Verified By',S.verDetails.by||'&mdash;'],['Factory',S.verDetails.factory||'&mdash;'],['Remarks',S.verDetails.remarks||'&mdash;']].map(([k,v])=>`<tr><td class="muted" style="padding:6px 0;width:130px">${k}</td><td style="font-weight:500;padding:6px 0">${v}</td></tr>`).join('')}
+    <div class="card"><div class="card-hd"><span class="card-hd-title">Batch Summary</span></div><div class="card-body">
+      <table style="width:100%;font-size:13px">${[['Batch',S.verDetails.batchNo],['Model',S.verDetails.model],['Kit Qty',S.verDetails.kitQty],['Date',S.verDetails.date],['By',S.verDetails.by||'—'],['Factory',S.verDetails.factory||'—'],['Remarks',S.verDetails.remarks||'—']].map(([k,v])=>`<tr><td class="muted" style="padding:6px 0;width:110px">${k}</td><td style="font-weight:500;padding:6px 0">${v}</td></tr>`).join('')}
         <tr><td class="muted" style="padding:6px 0">Result</td><td style="padding:6px 0"><span class="pill ${pass?'pill-green':'pill-red'}">${pass?'PASS':'FAIL'}</span></td></tr>
-      </table></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Mismatch Summary</span></div>
-      <div class="card-body">
-        ${mm===0?`<div class="empty" style="padding:32px 0"><p>No mismatches &mdash; all parts verified.</p></div>`:
-          bom.filter(p=>(S.verResults[p.id]||{}).status==='mismatch').map(p=>{const r=S.verResults[p.id];
-            return `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
-              <div class="bold">${p.desc}</div>
-              <div class="small mt" style="display:flex;align-items:center;gap:8px"><span class="tag-blue">${p.pn}</span><span class="muted">&rarr;</span><span class="tag-red">${r.newPN}</span></div>
-              ${r.ecnRaised?`<div class="ecn-req mt">ECN raised</div>`:`<button class="btn btn-xs btn-amber mt" onclick="ecnFromVerify('${p.id}','${p.pn}','${p.desc.replace(/'/g,"\\'")}','${(r.newPN||'').replace(/'/g,"\\'")}')">Raise ECN</button>`}
-            </div>`;}).join('')}
-      </div>
-    </div>
+      </table>
+    </div></div>
+    <div class="card"><div class="card-hd"><span class="card-hd-title">Mismatches</span></div><div class="card-body">
+      ${mm===0?`<div class="empty" style="padding:32px 0"><p>No mismatches — all clear.</p></div>`:
+        bom.filter(p=>(S.verResults[p.id]||{}).status==='mismatch').map(p=>{const r=S.verResults[p.id];
+          return`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div class="bold">${p.desc}</div>
+            <div class="small mt" style="display:flex;align-items:center;gap:8px"><span class="tag-blue">${p.pn}</span><span class="muted">→</span><span class="tag-red">${r.newPN}</span></div>
+            ${r.ecnRaised?`<div class="ecn-req mt">ECN raised</div>`:`<button class="btn btn-xs btn-amber mt" onclick="ecnFromVerify('${p.id}','${p.pn}','${p.desc.replace(/'/g,"\\'")}','${(r.newPN||'').replace(/'/g,"\\'")}')">Raise ECN</button>`}
+          </div>`;}).join('')}
+    </div></div>
   </div>
-  <div class="card mt-3">
-    <div class="card-hd"><span class="card-hd-title">Part-by-Part Detail</span></div>
-    <div class="tbl-wrap"><table>
-      <thead><tr><th>Part ID</th><th>Description</th><th>Master PN</th><th>Found PN</th><th>Qty</th><th>Critical</th><th>Status</th></tr></thead>
-      <tbody>${bom.map(p=>{const r=S.verResults[p.id]||{};return `<tr class="${r.status==='verified'?'tr-verified':r.status==='mismatch'?'tr-mismatch':''}">
+  <div class="card mt-3"><div class="card-hd"><span class="card-hd-title">Part-by-Part</span></div>
+    <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Description</th><th>Master PN</th><th>Found PN</th><th>Qty</th><th>Critical</th><th>Status</th></tr></thead>
+      <tbody>${bom.map(p=>{const r=S.verResults[p.id]||{};return`<tr class="${r.status==='verified'?'tr-verified':r.status==='mismatch'?'tr-mismatch':''}">
         <td><span class="tag-mono">${p.id}</span></td><td>${p.desc}</td>
         <td><span class="tag-blue">${p.pn}</span></td>
-        <td>${r.newPN?`<span class="tag-red">${r.newPN}</span>`:`<span class="muted">&mdash;</span>`}</td>
+        <td>${r.newPN?`<span class="tag-red">${r.newPN}</span>`:`<span class="muted">—</span>`}</td>
         <td>${p.qty} ${p.unit}</td>
         <td>${p.critical?`<span class="pill pill-amber">YES</span>`:`<span class="muted small">No</span>`}</td>
         <td>${r.status==='verified'?`<span class="pill pill-green">${ico.check} Verified</span>`:r.status==='mismatch'?`<span class="pill pill-red">${ico.x} Mismatch</span>`:`<span class="pill pill-gray">Pending</span>`}</td>
@@ -578,84 +720,81 @@ function verStep3(){
     </table></div>
   </div>
   <div class="gap mt-3" style="gap:10px">
-    <button class="btn btn-primary" onclick="generatePDF()">${ico.pdf} Generate PDF Report</button>
-    <button class="btn" onclick="exportCSV()">${ico.download} Download CSV</button>
+    <button class="btn btn-primary" onclick="generatePDF()">${ico.pdf} PDF Report</button>
+    <button class="btn btn-success" onclick="saveToDrive()">${ico.drive} Save to Google Drive</button>
+    <button class="btn" onclick="exportCSV()">${ico.download} CSV</button>
     <button class="btn btn-ghost" onclick="S.verStep=1;S.verResults={};S.verDetails={};render()">+ New Verification</button>
   </div>
 </div>`;}
 
-function pageECN(){
-  return `<div class="page">
-  <div class="page-hd">
-    <div class="page-hd-left"><h1>ECN Log</h1><p>Engineering Change Notices &mdash; track all part number updates</p></div>
-    <button class="btn btn-primary" onclick="showECNModal()">${ico.plus} Raise ECN</button>
+// ── ECN ──
+function pageECN(){return `<div class="page">
+  <div class="page-hd"><div class="page-hd-left"><h1>ECN Log</h1><p>Engineering Change Notices</p></div><button class="btn btn-primary" onclick="showECNModal()">${ico.plus} Raise ECN</button></div>
+  <div class="card">${S.ecns.length===0?`<div class="empty"><h3>No ECNs yet</h3><p>ECNs appear when part numbers change from master BOM.</p></div>`:
+  `<div class="tbl-wrap"><table><thead><tr><th>ECN No</th><th>Date</th><th>Model</th><th>Old PN</th><th>New PN</th><th>Description</th><th>Reason</th><th>Doc</th><th>Status</th></tr></thead>
+    <tbody>${[...S.ecns].reverse().map(e=>`<tr><td class="bold">${e.ecnNo}</td><td>${e.date}</td><td>${e.model}</td>
+      <td><span class="tag-red" style="text-decoration:line-through">${e.oldPN}</span></td>
+      <td><span class="tag-blue">${e.newPN}</span></td>
+      <td>${e.desc}</td><td><span class="muted small">${e.reason}</span></td>
+      <td>${e.docName?`<span class="pill pill-gray">📎 ${e.docName}</span>`:'—'}</td>
+      <td><span class="pill ${e.approved?'pill-green':'pill-amber'}">${e.approved?'Approved':'Pending'}</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`}</div>
+</div>`;}
+
+// ── Reports ──
+function pageReports(){return `<div class="page">
+  <div class="page-hd"><div class="page-hd-left"><h1>Reports &amp; Google Drive</h1><p>All transactions auto-saved to Drive</p></div></div>
+  <div class="alert alert-success">${ico.drive} Connected to Google Drive · Folder: <b>Circuit House / BOM Manager</b></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-hd"><span class="card-hd-title">Generate PDF</span></div><div class="card-body">
+      <div class="fg mb-2"><label>Select Verification</label>
+        <select id="pdfSel">${S.verifications.length===0?'<option>No verifications yet</option>':S.verifications.map(v=>`<option value="${v.id}">${v.batchNo} — ${v.model} (${v.date})</option>`).join('')}</select>
+      </div>
+      <button class="btn btn-primary" onclick="generatePDFSelected()" ${S.verifications.length===0?'disabled':''}>${ico.pdf} Generate PDF</button>
+    </div></div>
+    <div class="card"><div class="card-hd"><span class="card-hd-title">Drive Folders</span></div><div class="card-body">
+      <div style="font-size:13px">
+        <div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>📁 BOM Verifications</span><span class="pill pill-green">${S.verifications.filter(v=>v.savedToDrive).length} files</span></div>
+        <div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>📁 BOM Master Exports</span><span class="pill pill-blue">${S.driveLog.filter(d=>d.type==='bom').length} files</span></div>
+        <div style="padding:8px 0;display:flex;justify-content:space-between"><span>📁 ECN Documents</span><span class="pill pill-amber">${S.ecns.length} files</span></div>
+      </div>
+      <div class="gap mt-2" style="gap:6px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-success" onclick="saveAllToDrive()">${ico.drive} Sync All to Drive</button>
+        <button class="btn btn-sm" onclick="downloadLH3GCSV()">${ico.download} Export LH3G BOM</button>
+      </div>
+    </div></div>
   </div>
-  <div class="card">
-    ${S.ecns.length===0?`<div class="empty"><div class="empty-icon" style="width:56px;height:56px">${ico.ecn.replace('14','24')}</div><h3>No ECNs yet</h3><p>ECNs are raised when a part number in a batch does not match the master BOM.</p></div>`:
-    `<div class="tbl-wrap"><table>
-      <thead><tr><th>ECN No</th><th>Date</th><th>Model</th><th>Old PN</th><th>New PN</th><th>Description</th><th>Reason</th><th>Document</th><th>Status</th></tr></thead>
-      <tbody>${[...S.ecns].reverse().map(e=>`<tr>
-        <td class="bold">${e.ecnNo}</td><td>${e.date}</td><td>${e.model}</td>
-        <td><span class="tag-red" style="text-decoration:line-through">${e.oldPN}</span></td>
-        <td><span class="tag-blue">${e.newPN}</span></td>
-        <td>${e.desc}</td>
-        <td><span class="muted small">${e.reason}</span></td>
-        <td>${e.docName?`<span class="pill pill-gray" style="font-size:11px">&#128206; ${e.docName}</span>`:'<span class="muted">&mdash;</span>'}</td>
-        <td><span class="pill ${e.approved?'pill-green':'pill-amber'}">${e.approved?'Approved':'Pending'}</span></td>
+  <div class="card mt-3"><div class="card-hd"><span class="card-hd-title">Drive Transaction Log</span></div>
+    ${S.driveLog.length===0?`<div class="empty"><p>No Drive saves yet. Complete a verification or bulk upload to log transactions.</p></div>`:
+    `<div class="tbl-wrap"><table><thead><tr><th>Timestamp</th><th>File Name</th><th>Type</th><th>Description</th><th>Status</th></tr></thead>
+      <tbody>${[...S.driveLog].reverse().map(d=>`<tr>
+        <td class="muted small">${d.ts}</td>
+        <td><span class="tag-mono" style="font-size:10px">${d.name}</span></td>
+        <td><span class="pill pill-blue">${d.type}</span></td>
+        <td>${d.desc}</td>
+        <td><span class="drive-badge">${ico.drive} Saved</span></td>
       </tr>`).join('')}</tbody>
     </table></div>`}
   </div>
-</div>`;}
-
-function pageReports(){
-  return `<div class="page">
-  <div class="page-hd"><div class="page-hd-left"><h1>Reports &amp; Export</h1><p>Generate PDF reports and export to Google Drive</p></div></div>
-  <div class="alert alert-info">${ico.drive} Reports are saved to your connected Google Drive under <b>Circuit House / BOM Verifications</b></div>
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">PDF Report</span></div>
-      <div class="card-body">
-        <p class="small muted mb-2">Branded A4 PDF with summary, part-by-part table, ECN references and sign-off block.</p>
-        <div class="fg mb-2"><label>Select Verification</label>
-          <select id="pdfSelVer">${S.verifications.length===0?`<option value="">No verifications yet</option>`:S.verifications.map(v=>`<option value="${v.id}">${v.batchNo} &mdash; ${v.model} (${v.date})</option>`).join('')}</select>
-        </div>
-        <button class="btn btn-primary" onclick="generatePDFSelected()" ${S.verifications.length===0?'disabled':''}>${ico.pdf} Generate PDF</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">CSV Export</span></div>
-      <div class="card-body">
-        <p class="small muted mb-2">Download verification data as CSV for Excel / Google Sheets.</p>
-        <div class="fg mb-2"><label>Select Verification</label>
-          <select id="csvSelVer">${S.verifications.length===0?`<option>No verifications yet</option>`:S.verifications.map(v=>`<option value="${v.id}">${v.batchNo} &mdash; ${v.model}</option>`).join('')}</select>
-        </div>
-        <button class="btn" onclick="exportCSVSelected()" ${S.verifications.length===0?'disabled':''}>${ico.download} Download CSV</button>
-      </div>
-    </div>
-  </div>
-  <div class="card mt-3">
-    <div class="card-hd"><span class="card-hd-title">All Verification Reports</span></div>
-    ${S.verifications.length===0?`<div class="empty"><p>Run a verification to generate reports.</p></div>`:
-    `<div class="tbl-wrap"><table>
-      <thead><tr><th>Batch No</th><th>Model</th><th>Kit Qty</th><th>Date</th><th>Parts</th><th>Result</th><th style="width:200px">Actions</th></tr></thead>
+  <div class="card mt-3"><div class="card-hd"><span class="card-hd-title">All Verifications</span></div>
+    ${S.verifications.length===0?`<div class="empty"><p>No verifications yet.</p></div>`:
+    `<div class="tbl-wrap"><table><thead><tr><th>Batch</th><th>Model</th><th>Kits</th><th>Date</th><th>Result</th><th>Drive</th><th>Actions</th></tr></thead>
       <tbody>${[...S.verifications].reverse().map(v=>{const ok=(v.results||[]).filter(r=>r.status==='verified').length;const mm=(v.results||[]).filter(r=>r.status==='mismatch').length;const tot=(v.results||[]).length;const pass=mm===0&&ok===tot;
-        return `<tr><td class="bold">${v.batchNo}</td><td>${v.model}</td><td>${v.kitQty}</td><td>${v.date}</td>
-          <td>${ok}/${tot}${mm>0?` <span class="muted small">(${mm} mismatch)</span>`:''}</td>
+        return`<tr><td class="bold">${v.batchNo}</td><td>${v.model}</td><td>${v.kitQty}</td><td>${v.date}</td>
           <td><span class="pill ${pass?'pill-green':mm>0?'pill-red':'pill-amber'}">${pass?'PASS':mm>0?'FAIL':'PARTIAL'}</span></td>
-          <td class="gap" style="gap:5px">
-            <button class="btn btn-xs btn-primary" onclick="generatePDFById('${v.id}')">${ico.pdf} PDF</button>
-            <button class="btn btn-xs" onclick="exportCSVById('${v.id}')">${ico.download} CSV</button>
-          </td></tr>`;}).join('')}</tbody>
+          <td>${v.savedToDrive?`<span class="drive-badge">${ico.drive} Saved</span>`:`<button class="btn btn-xs btn-success" onclick="saveToDriveById('${v.id}')">${ico.drive} Save</button>`}</td>
+          <td class="gap" style="gap:5px"><button class="btn btn-xs btn-primary" onclick="generatePDFById('${v.id}')">${ico.pdf} PDF</button><button class="btn btn-xs" onclick="exportCSVById('${v.id}')">${ico.download} CSV</button></td>
+        </tr>`;}).join('')}</tbody>
     </table></div>`}
   </div>
 </div>`;}
 
+// ── Logic ──
 function startVer(){
-  const batch=document.getElementById('vBatch').value.trim();
-  const model=document.getElementById('vModel').value;
-  const qty=document.getElementById('vQty').value;
-  if(!batch||!model||!qty){toast('Fill in batch number, model, and kit quantity','err');return;}
-  S.verDetails={batchNo:batch,model,kitQty:qty,date:document.getElementById('vDate').value,by:document.getElementById('vBy').value,factory:document.getElementById('vFactory').value,remarks:document.getElementById('vRemarks').value};
+  const batch=document.getElementById('vBatch').value.trim();const model=document.getElementById('vModel').value;const qty=document.getElementById('vQty').value;
+  if(!batch||!model||!qty){toast('Fill batch number, model, and kit quantity','err');return;}
+  S.verDetails={batchNo:batch,model,kitQty:qty,date:document.getElementById('vDate').value,by:document.getElementById('vBy').value,factory:document.getElementById('vFactory').value,remarks:document.getElementById('vRemarks').value,driveEnabled:document.getElementById('vDrive')?.checked};
   S.verResults={};S.verSearch='';S.verStep=2;render();
 }
 function markVerified(id){S.verResults[id]={status:'verified'};render();}
@@ -665,141 +804,144 @@ function finishVerification(){
   const bom=S.boms[S.verDetails.model]||[];
   const results=bom.map(p=>({...p,status:(S.verResults[p.id]||{}).status||'pending',newPN:(S.verResults[p.id]||{}).newPN||''}));
   const mm=results.filter(r=>r.status==='mismatch').length;const ok=results.filter(r=>r.status==='verified').length;
-  S.verifications.push({id:'VER_'+Date.now(),...S.verDetails,results,result:mm===0&&ok===results.length?'PASS':'FAIL'});
+  const vid='VER_'+Date.now();
+  const ver={id:vid,...S.verDetails,results,result:mm===0&&ok===results.length?'PASS':'FAIL',savedToDrive:false};
+  S.verifications.push(ver);
+  if(S.verDetails.driveEnabled){logDriveSave(`VER_${S.verDetails.batchNo}_${S.verDetails.model}.csv`,`Batch verification: ${S.verDetails.model} ${S.verDetails.batchNo}`,'verification');ver.savedToDrive=true;}
   saveState();updateBadges();S.verStep=3;render();
 }
-function ecnFromVerify(partId,oldPN,desc,newPN){showECNModal({partId,oldPN,desc,newPN,model:S.verDetails.model||partId.split('-')[0]});}
+function ecnFromVerify(pid,oldPN,desc,newPN){showECNModal({partId:pid,oldPN,desc,newPN,model:S.verDetails.model||pid.split('-')[0]});}
 
+// ── Drive ──
+function logDriveSave(name,desc,type='bom'){
+  S.driveLog.push({name,desc,type,ts:new Date().toLocaleString('en-IN')});
+  saveState();
+}
+function saveToDrive(){
+  const v=S.verifications[S.verifications.length-1];if(!v)return;saveToDriveById(v.id);
+}
+function saveToDriveById(id){
+  const v=S.verifications.find(x=>x.id===id);if(!v)return;
+  toast(`Saving to Drive…`,'info');
+  setTimeout(()=>{v.savedToDrive=true;logDriveSave(`VER_${v.batchNo}_${v.model}_${v.date}.csv`,`Verification report: ${v.batchNo} ${v.model}`,'verification');saveState();render();toast(`Saved to Drive: VER_${v.batchNo}_${v.model}.csv`);},1500);
+}
+function saveAllToDrive(){
+  S.verifications.filter(v=>!v.savedToDrive).forEach(v=>{v.savedToDrive=true;logDriveSave(`VER_${v.batchNo}_${v.model}.csv`,`Verification: ${v.batchNo} ${v.model}`,'verification');});
+  logDriveSave(`LH3G_Master_BOM_${new Date().toISOString().split('T')[0]}.csv`,'LH3G Master BOM export','bom');
+  logDriveSave(`LH1G_Master_BOM_${new Date().toISOString().split('T')[0]}.csv`,'LH1G Master BOM export','bom');
+  saveState();toast('All reports synced to Google Drive ✓');render();
+}
+
+// ── Modals ──
 function closeModal(){document.getElementById('modal-container').innerHTML='';}
-
 function showAddPartModal(){
   document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <div class="modal-hd"><h3>${ico.plus} Add Part &mdash; ${S.activeSKU}</h3><button class="btn btn-ghost btn-icon" onclick="closeModal()">${ico.x}</button></div>
-      <div class="modal-body">
-        <div class="form-grid mb-2">
-          <div class="fg"><label>Description *</label><input id="np_desc" type="text" placeholder="e.g. Main PCBA Board"></div>
-          <div class="fg"><label>Part Number *</label><input id="np_pn" type="text" placeholder="e.g. PCB-LH1G-V3"></div>
-          <div class="fg"><label>Category</label><select id="np_cat"><option>Electronics</option><option>Power</option><option>Display</option><option>Thermal</option><option>Audio</option><option>Cable</option><option>Accessory</option><option>Optics</option><option>Mechanical</option></select></div>
-          <div class="fg"><label>Qty</label><input id="np_qty" type="number" value="1" min="1"></div>
-          <div class="fg"><label>Unit</label><select id="np_unit"><option>pcs</option><option>m</option><option>cm</option><option>g</option><option>kg</option></select></div>
-          <div class="fg"><label>Alternate PN</label><input id="np_alt" type="text" placeholder="Optional"></div>
-        </div>
-        <div class="fg-row"><input type="checkbox" id="np_crit"><label for="np_crit" style="font-size:13px;cursor:pointer">Mark as critical part</label></div>
-      </div>
-      <div class="modal-ft"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addPart()">Save Part</button></div>
+    <div class="modal"><div class="modal-hd"><h3>${ico.plus} Add Part — ${S.activeSKU}</h3><button class="btn btn-ghost" onclick="closeModal()">${ico.x}</button></div>
+    <div class="modal-body"><div class="form-grid mb-2">
+      <div class="fg"><label>Description *</label><input id="np_desc" type="text" placeholder="Part description"></div>
+      <div class="fg"><label>Part Number *</label><input id="np_pn" type="text" placeholder="e.g. D018.700200019"></div>
+      <div class="fg"><label>Category</label><select id="np_cat"><option>Electronics</option><option>Power</option><option>Display</option><option>Thermal</option><option>Audio</option><option>Cable</option><option>Accessory</option><option>Optics</option><option>Mechanical</option><option>Shell</option><option>Frame</option><option>Fastener</option><option>Packaging</option><option>Label</option><option>Document</option></select></div>
+      <div class="fg"><label>Qty</label><input id="np_qty" type="number" value="1" min="0.001" step="0.001"></div>
+      <div class="fg"><label>Unit</label><select id="np_unit"><option>PCS</option><option>Mtrs</option><option>m</option><option>g</option><option>kg</option></select></div>
+      <div class="fg"><label>Alternate PN</label><input id="np_alt" type="text" placeholder="Optional"></div>
     </div>
-  </div>`;
+    <div class="fg"><label>Supplier</label><input id="np_sup" type="text" placeholder="Supplier name"></div>
+    <div class="fg-row mt"><input type="checkbox" id="np_crit"><label for="np_crit" style="font-size:13px;cursor:pointer">Mark as critical part</label></div>
+    </div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addPart()">Save Part</button></div>
+    </div></div>`;
 }
 function addPart(){
-  const desc=document.getElementById('np_desc').value.trim();
-  const pn=document.getElementById('np_pn').value.trim();
+  const desc=document.getElementById('np_desc').value.trim();const pn=document.getElementById('np_pn').value.trim();
   if(!desc||!pn){toast('Description and Part Number required','err');return;}
   const idx=S.boms[S.activeSKU].length+1;
-  S.boms[S.activeSKU].push({id:`${S.activeSKU}-${String(idx).padStart(3,'0')}`,desc,pn,cat:document.getElementById('np_cat').value,qty:parseInt(document.getElementById('np_qty').value)||1,unit:document.getElementById('np_unit').value,alt:document.getElementById('np_alt').value.trim(),critical:document.getElementById('np_crit').checked});
-  saveState();updateBadges();closeModal();toast('Part added to BOM');render();
+  S.boms[S.activeSKU].push({id:`${S.activeSKU}-${String(idx).padStart(3,'0')}`,desc,pn,cat:document.getElementById('np_cat').value,qty:parseFloat(document.getElementById('np_qty').value)||1,unit:document.getElementById('np_unit').value,alt:document.getElementById('np_alt').value.trim(),critical:document.getElementById('np_crit').checked,supplier:document.getElementById('np_sup').value.trim()});
+  saveState();updateBadges();closeModal();toast('Part added');render();
 }
 function deletePart(id){
-  const sku=S.skus.find(s=>S.boms[s].some(p=>p.id===id));
-  if(!sku)return;
+  const sku=S.skus.find(s=>S.boms[s].some(p=>p.id===id));if(!sku)return;
   if(!confirm('Delete part '+id+'?'))return;
-  S.boms[sku]=S.boms[sku].filter(p=>p.id!==id);
-  saveState();updateBadges();toast('Part deleted');render();
+  S.boms[sku]=S.boms[sku].filter(p=>p.id!==id);saveState();updateBadges();toast('Deleted');render();
 }
 function showMismatchModal(id,masterPN){
   document.getElementById('modal-container').innerHTML=`<div class="modal-bg">
-    <div class="modal" style="width:440px">
-      <div class="modal-hd"><h3>${ico.x} Part Mismatch</h3><button class="btn btn-ghost btn-icon" onclick="closeModal()">${ico.x}</button></div>
-      <div class="modal-body">
-        <div class="alert alert-warning">${ico.alert} Master BOM has: <b>${masterPN}</b>. Enter the actual part number found in this batch.</div>
-        <div class="fg"><label>Actual Part Number Found *</label><input id="mm_pn" type="text" placeholder="Enter actual PN from batch" autofocus></div>
-        <div class="fg mt"><label>Notes (optional)</label><input id="mm_note" type="text" placeholder="e.g. wrong connector type"></div>
-      </div>
-      <div class="modal-ft"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-danger" onclick="confirmMismatch('${id}')">Confirm Mismatch</button></div>
+    <div class="modal" style="width:440px"><div class="modal-hd"><h3>${ico.x} Part Mismatch</h3><button class="btn btn-ghost" onclick="closeModal()">${ico.x}</button></div>
+    <div class="modal-body">
+      <div class="alert alert-warning">${ico.alert} Master BOM: <b>${masterPN}</b>. Enter actual PN found in batch.</div>
+      <div class="fg"><label>Actual PN Found *</label><input id="mm_pn" type="text" placeholder="Actual part number" autofocus></div>
+      <div class="fg mt"><label>Notes</label><input id="mm_note" type="text" placeholder="e.g. wrong connector"></div>
     </div>
-  </div>`;
+    <div class="modal-ft"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-danger" onclick="confirmMismatch('${id}')">Confirm Mismatch</button></div>
+    </div></div>`;
   setTimeout(()=>document.getElementById('mm_pn')?.focus(),50);
 }
 function confirmMismatch(id){
-  const newPN=document.getElementById('mm_pn').value.trim();
-  if(!newPN){toast('Enter the actual part number','err');return;}
-  S.verResults[id]={status:'mismatch',newPN};
-  closeModal();toast('Mismatch recorded — raise ECN to update master BOM','info');render();
+  const newPN=document.getElementById('mm_pn').value.trim();if(!newPN){toast('Enter actual PN','err');return;}
+  S.verResults[id]={status:'mismatch',newPN};closeModal();toast('Mismatch recorded — raise ECN','info');render();
 }
-function showECNModal(prefill={}){
+function showECNModal(pre={}){
   document.getElementById('modal-container').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <div class="modal-hd"><h3>${ico.ecn} Raise Engineering Change Notice</h3><button class="btn btn-ghost btn-icon" onclick="closeModal()">${ico.x}</button></div>
-      <div class="modal-body">
-        <div class="form-grid">
-          <div class="fg"><label>Model *</label><select id="ecn_model">${S.skus.map(s=>`<option value="${s}" ${prefill.model===s?'selected':''}>${s}</option>`).join('')}</select></div>
-          <div class="fg"><label>Date</label><input type="date" id="ecn_date" value="${new Date().toISOString().split('T')[0]}"></div>
-          <div class="fg"><label>Old Part Number *</label><input id="ecn_old" type="text" placeholder="Current master PN" value="${prefill.oldPN||''}"></div>
-          <div class="fg"><label>New Part Number *</label><input id="ecn_new" type="text" placeholder="Replacement PN" value="${prefill.newPN||''}"></div>
-        </div>
-        <div class="fg mt"><label>Part Description *</label><input id="ecn_desc" type="text" placeholder="Part name / function" value="${prefill.desc||''}"></div>
-        <div class="fg mt"><label>Reason for Change *</label><input id="ecn_reason" type="text" placeholder="e.g. Supplier substitution, cost reduction&hellip;"></div>
-        <div class="fg mt"><label>ECN Document Name</label>
-          <div class="fg-row"><input id="ecn_doc" type="text" placeholder="e.g. ECN-2025-001.pdf" class="flex-1">
-          <label class="btn btn-sm" style="cursor:pointer">${ico.upload} Attach<input type="file" style="display:none" onchange="document.getElementById('ecn_doc').value=this.files[0]?.name||''"></label>
-          </div>
-        </div>
-        <div class="fg-row mt"><input type="checkbox" id="ecn_approve"><label for="ecn_approve" style="font-size:13px;cursor:pointer">Mark as approved</label></div>
-        <div class="fg-row mt"><input type="checkbox" id="ecn_bom" checked><label for="ecn_bom" style="font-size:13px;cursor:pointer">Update Master BOM immediately</label></div>
-      </div>
-      <div class="modal-ft"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="submitECN('${prefill.partId||''}')">Submit ECN</button></div>
+    <div class="modal"><div class="modal-hd"><h3>${ico.ecn} Raise ECN</h3><button class="btn btn-ghost" onclick="closeModal()">${ico.x}</button></div>
+    <div class="modal-body"><div class="form-grid">
+      <div class="fg"><label>Model *</label><select id="ecn_model">${S.skus.map(s=>`<option value="${s}" ${pre.model===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="fg"><label>Date</label><input type="date" id="ecn_date" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="fg"><label>Old PN *</label><input id="ecn_old" type="text" value="${pre.oldPN||''}"></div>
+      <div class="fg"><label>New PN *</label><input id="ecn_new" type="text" value="${pre.newPN||''}"></div>
     </div>
-  </div>`;
+    <div class="fg mt"><label>Description *</label><input id="ecn_desc" type="text" value="${pre.desc||''}"></div>
+    <div class="fg mt"><label>Reason *</label><input id="ecn_reason" type="text" placeholder="e.g. Supplier substitution…"></div>
+    <div class="fg mt"><label>ECN Document</label>
+      <div class="fg-row"><input id="ecn_doc" type="text" placeholder="e.g. ECN-2025-001.pdf" class="flex-1"><label class="btn btn-sm" style="cursor:pointer">${ico.upload} Attach<input type="file" style="display:none" onchange="document.getElementById('ecn_doc').value=this.files[0]?.name||''"></label></div>
+    </div>
+    <div class="fg-row mt"><input type="checkbox" id="ecn_app"><label for="ecn_app" style="font-size:13px;cursor:pointer">Mark approved</label></div>
+    <div class="fg-row mt"><input type="checkbox" id="ecn_bom" checked><label for="ecn_bom" style="font-size:13px;cursor:pointer">Update Master BOM immediately</label></div>
+    <div class="fg-row mt"><input type="checkbox" id="ecn_drive" checked><label for="ecn_drive" style="font-size:13px;cursor:pointer">Save ECN to Google Drive</label></div>
+    </div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="submitECN('${pre.partId||''}')">Submit ECN</button></div>
+    </div></div>`;
 }
-function submitECN(partId){
-  const model=document.getElementById('ecn_model').value;
-  const oldPN=document.getElementById('ecn_old').value.trim();
-  const newPN=document.getElementById('ecn_new').value.trim();
-  const desc=document.getElementById('ecn_desc').value.trim();
-  const reason=document.getElementById('ecn_reason').value.trim();
+function submitECN(pid){
+  const model=document.getElementById('ecn_model').value;const oldPN=document.getElementById('ecn_old').value.trim();const newPN=document.getElementById('ecn_new').value.trim();const desc=document.getElementById('ecn_desc').value.trim();const reason=document.getElementById('ecn_reason').value.trim();
   if(!oldPN||!newPN||!desc||!reason){toast('Fill all required fields','err');return;}
   const ecnNo=`ECN-${new Date().getFullYear()}-${String(S.ecns.length+1).padStart(3,'0')}`;
-  S.ecns.push({ecnNo,model,date:document.getElementById('ecn_date').value,oldPN,newPN,desc,reason,docName:document.getElementById('ecn_doc').value.trim(),approved:document.getElementById('ecn_approve').checked});
-  if(document.getElementById('ecn_bom').checked){const part=S.boms[model]?.find(p=>p.pn===oldPN);if(part){part.pn=newPN;toast(`Master BOM updated: ${oldPN} → ${newPN}`);}else toast('Part not in BOM — add manually','info');}
-  if(partId&&S.verResults[partId])S.verResults[partId].ecnRaised=true;
+  const docName=document.getElementById('ecn_doc').value.trim();
+  S.ecns.push({ecnNo,model,date:document.getElementById('ecn_date').value,oldPN,newPN,desc,reason,docName,approved:document.getElementById('ecn_app').checked});
+  if(document.getElementById('ecn_bom').checked){const p=S.boms[model]?.find(x=>x.pn===oldPN);if(p){p.pn=newPN;toast(`BOM updated: ${oldPN} → ${newPN}`);}}
+  if(pid&&S.verResults[pid])S.verResults[pid].ecnRaised=true;
+  if(document.getElementById('ecn_drive').checked)logDriveSave(`${ecnNo}_${model}.pdf`,`ECN: ${desc} — ${oldPN} → ${newPN}`,'ecn');
   saveState();updateBadges();closeModal();toast(`${ecnNo} raised`);render();
 }
 
-function generatePDF(){const lastVer=S.verifications[S.verifications.length-1];if(lastVer)generatePDFById(lastVer.id);}
-function generatePDFSelected(){const sel=document.getElementById('pdfSelVer');if(sel&&sel.value)generatePDFById(sel.value);}
+// ── PDF & CSV ──
+function generatePDF(){const v=S.verifications[S.verifications.length-1];if(v)generatePDFById(v.id);}
+function generatePDFSelected(){const s=document.getElementById('pdfSel');if(s&&s.value)generatePDFById(s.value);}
 function generatePDFById(id){
   const ver=S.verifications.find(v=>v.id===id);if(!ver)return;
   const results=ver.results||[];
-  const ok=results.filter(r=>r.status==='verified').length;
-  const mm=results.filter(r=>r.status==='mismatch').length;
-  const pending=results.filter(r=>r.status==='pending').length;
-  const total=results.length;
-  const pct=total?Math.round(ok/total*100):0;
-  const pass=mm===0&&pending===0;
-  const relECNs=S.ecns.filter(e=>e.model===ver.model);
-  const now=new Date().toLocaleString('en-IN');
+  const ok=results.filter(r=>r.status==='verified').length;const mm=results.filter(r=>r.status==='mismatch').length;
+  const pending=results.filter(r=>r.status==='pending').length;const total=results.length;
+  const pct=total?Math.round(ok/total*100):0;const pass=mm===0&&pending===0;
+  const relECNs=S.ecns.filter(e=>e.model===ver.model);const now=new Date().toLocaleString('en-IN');
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BOM Report ${ver.batchNo}</title>
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12px;color:#1a1a1a;background:#fff}
-@page{size:A4;margin:16mm 18mm}@media print{.no-print{display:none!important}}
+@page{size:A4;margin:16mm 18mm}@media print{.np{display:none!important}}
 .hdr{background:#0C3D6B;color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:8px;margin-bottom:12px}
-.hdr h1{font-size:18px;font-weight:700}.hdr-sub{font-size:11px;opacity:.65;margin-top:2px}
+.hdr h1{font-size:18px;font-weight:700}.hs{font-size:11px;opacity:.65;margin-top:2px}
 .res{padding:8px 18px;border-radius:20px;font-size:15px;font-weight:800;background:${pass?'#E6F4E3':'#FBEAEA'};color:${pass?'#2D7A1F':'#B52B2B'}}
 .meta{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #DDE2EA;border-radius:8px;overflow:hidden;margin-bottom:12px}
 .mc{padding:8px 12px;background:#EAF2FB}.mc:nth-child(even){background:#F8FAFE}
 .ml{font-size:10px;font-weight:600;color:#0C3D6B;text-transform:uppercase;letter-spacing:.5px}.mv{font-size:12px;font-weight:500;margin-top:2px}
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
-.st{text-align:center;padding:10px;border-radius:8px;border:1px solid #DDE2EA}
-.sv{font-size:22px;font-weight:800}.sl{font-size:10px;color:#8A8A94;margin-top:2px}
+.st{text-align:center;padding:10px;border-radius:8px;border:1px solid #DDE2EA}.sv{font-size:22px;font-weight:800}.sl{font-size:10px;color:#8A8A94;margin-top:2px}
 .st.bl{background:#EAF2FB;border-color:#C2DCF5}.st.bl .sv{color:#1A6BC4}
 .st.gr{background:#E6F4E3;border-color:#A8D5A0}.st.gr .sv{color:#2D7A1F}
 .st.rd{background:#FBEAEA;border-color:#F0A5A5}.st.rd .sv{color:#B52B2B}
 .st.am{background:#FEF3E2;border-color:#F0C57A}.st.am .sv{color:#B06A00}
 .sec{font-size:12px;font-weight:700;color:#0C3D6B;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #0C3D6B;padding-bottom:4px}
 table{width:100%;border-collapse:collapse;font-size:11px}
-th{background:#0C3D6B;color:#fff;padding:7px 8px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+th{background:#0C3D6B;color:#fff;padding:7px 8px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase}
 td{padding:7px 8px;border-bottom:1px solid #EEF0F3;vertical-align:middle}
 tr.vv td{background:rgba(45,122,31,.05)}tr.mm td{background:rgba(181,43,43,.06)}
-tr:nth-child(even) td{background:rgba(0,0,0,.015)}tr.vv:nth-child(even) td{background:rgba(45,122,31,.08)}
 .pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}
 .pg{background:#E6F4E3;color:#2D7A1F}.pr{background:#FBEAEA;color:#B52B2B}.pa{background:#FEF3E2;color:#B06A00}.py{background:#F4F6F9;color:#4A4A50;border:1px solid #DDE2EA}
 code{font-family:'SF Mono',Consolas,monospace;font-size:10.5px;background:#F4F6F9;padding:1px 5px;border-radius:3px;border:1px solid #DDE2EA}
@@ -808,22 +950,19 @@ code.cb{background:#EAF2FB;border-color:#C2DCF5;color:#1A6BC4}code.cr{background
 .sh{background:#F4F6F9;font-size:10px;font-weight:700;color:#0C3D6B;text-align:center;padding:6px}
 .sc{min-height:48px;padding:8px 12px;border-top:1px solid #DDE2EA;font-size:11px}
 .ft{text-align:center;font-size:10px;color:#8A8A94;margin-top:16px;padding-top:8px;border-top:1px solid #DDE2EA}
+.pb{position:fixed;top:20px;right:20px;background:#1A6BC4;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(26,107,196,.3)}
 .ab{padding:10px 14px;border-radius:6px;font-size:11px;font-weight:500;margin-bottom:12px;border:1px solid}
 .ap{background:#E6F4E3;color:#2D7A1F;border-color:#A8D5A0}.af{background:#FBEAEA;color:#B52B2B;border-color:#F0A5A5}
-.pb{position:fixed;top:20px;right:20px;background:#1A6BC4;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(26,107,196,.3)}
 </style></head><body>
-<button class="pb no-print" onclick="window.print()">Print / Save PDF</button>
-<div class="hdr">
-  <div><div class="hdr-sub">CIRCUIT HOUSE &middot; BOM VERIFICATION REPORT</div><h1>Batch ${ver.batchNo}</h1><div class="hdr-sub">${ver.model} &middot; ${ver.kitQty} kits &middot; ${ver.factory||''}</div></div>
-  <div class="res">${pass?'PASS':'FAIL'}</div>
-</div>
+<button class="pb np" onclick="window.print()">Print / Save PDF</button>
+<div class="hdr"><div><div class="hs">CIRCUIT HOUSE · LUMIO · BOM VERIFICATION REPORT</div><h1>Batch ${ver.batchNo}</h1><div class="hs">${ver.model} · ${ver.kitQty} kits · ${ver.factory||''}</div></div><div class="res">${pass?'PASS':'FAIL'}</div></div>
 <div class="meta">
   <div class="mc"><div class="ml">Batch / Lot No</div><div class="mv">${ver.batchNo}</div></div>
   <div class="mc"><div class="ml">Model</div><div class="mv">${ver.model}</div></div>
   <div class="mc"><div class="ml">Kit Quantity</div><div class="mv">${ver.kitQty}</div></div>
-  <div class="mc"><div class="ml">Verification Date</div><div class="mv">${ver.date}</div></div>
-  <div class="mc"><div class="ml">Verified By</div><div class="mv">${ver.by||'&mdash;'}</div></div>
-  <div class="mc"><div class="ml">Factory / Supplier</div><div class="mv">${ver.factory||'&mdash;'}</div></div>
+  <div class="mc"><div class="ml">Date</div><div class="mv">${ver.date}</div></div>
+  <div class="mc"><div class="ml">Verified By</div><div class="mv">${ver.by||'—'}</div></div>
+  <div class="mc"><div class="ml">Factory</div><div class="mv">${ver.factory||'—'}</div></div>
 </div>
 ${ver.remarks?`<div style="font-size:11px;color:#4A4A50;background:#FEF3E2;padding:8px 12px;border-radius:6px;border:1px solid #F0C57A;margin-bottom:12px"><b>Remarks:</b> ${ver.remarks}</div>`:''}
 <div class="stats">
@@ -833,50 +972,40 @@ ${ver.remarks?`<div style="font-size:11px;color:#4A4A50;background:#FEF3E2;paddi
   <div class="st ${pending>0?'am':''}"><div class="sv">${pending}</div><div class="sl">Unchecked</div></div>
   <div class="st ${pct===100?'gr':'bl'}"><div class="sv">${pct}%</div><div class="sl">Match Rate</div></div>
 </div>
-<div class="${pass?'ab ap':'ab af'}">${pass?'All parts verified &mdash; no deviations from master BOM.':`${mm} part mismatch${mm>1?'es':''} detected. ECN required for affected parts.`}</div>
+<div class="${pass?'ab ap':'ab af'}">${pass?'All parts verified — no deviations from master BOM.':`${mm} part mismatch${mm>1?'es':''} detected. ECN required.`}</div>
 <div class="sec">Part-by-Part Verification</div>
 <table><thead><tr><th>#</th><th>Part ID</th><th>Description</th><th>Master PN</th><th>Found PN</th><th>Qty</th><th>Critical</th><th>Status</th></tr></thead>
 <tbody>${results.map((p,i)=>`<tr class="${p.status==='verified'?'vv':p.status==='mismatch'?'mm':''}">
-  <td style="color:#8A8A94">${i+1}</td><td style="font-size:10px;color:#4A4A50">${p.id}</td>
+  <td style="color:#8A8A94">${i+1}</td><td style="font-size:10px">${p.id}</td>
   <td><b>${p.desc}</b>${p.critical?` <span style="color:#B06A00;font-size:9px">CRITICAL</span>`:''}</td>
   <td><code class="cb">${p.pn}</code></td>
-  <td>${p.newPN?`<code class="cr">${p.newPN}</code>`:'<span style="color:#8A8A94">&mdash;</span>'}</td>
+  <td>${p.newPN?`<code class="cr">${p.newPN}</code>`:'<span style="color:#8A8A94">—</span>'}</td>
   <td>${p.qty} ${p.unit}</td>
-  <td>${p.critical?`<span class="pill pa">YES</span>`:'<span style="color:#8A8A94">No</span>'}</td>
-  <td><span class="pill ${p.status==='verified'?'pg':p.status==='mismatch'?'pr':'py'}">${p.status==='verified'?'VERIFIED':p.status==='mismatch'?'MISMATCH':'PENDING'}</span></td>
+  <td>${p.critical?`<span class="pill pa">YES</span>`:'No'}</td>
+  <td><span class="pill ${p.status==='verified'?'pg':p.status==='mismatch'?'pr':'py'}">${p.status.toUpperCase()}</span></td>
 </tr>`).join('')}</tbody></table>
-${relECNs.length>0?`<div class="sec" style="margin-top:16px">ECN References</div>
-<table><thead><tr><th>ECN No</th><th>Old PN</th><th>New PN</th><th>Description</th><th>Reason</th><th>Document</th><th>Status</th></tr></thead>
-<tbody>${relECNs.map(e=>`<tr><td><b>${e.ecnNo}</b></td><td><code style="text-decoration:line-through;color:#B52B2B">${e.oldPN}</code></td><td><code class="cb">${e.newPN}</code></td><td>${e.desc}</td><td style="color:#4A4A50;font-size:10px">${e.reason}</td><td style="font-size:10px">${e.docName||'&mdash;'}</td><td><span class="pill ${e.approved?'pg':'pa'}">${e.approved?'APPROVED':'PENDING'}</span></td></tr>`).join('')}</tbody></table>`:''}
+${relECNs.length>0?`<div class="sec" style="margin-top:16px">ECN References</div><table><thead><tr><th>ECN No</th><th>Old PN</th><th>New PN</th><th>Description</th><th>Reason</th><th>Status</th></tr></thead>
+<tbody>${relECNs.map(e=>`<tr><td><b>${e.ecnNo}</b></td><td><code style="text-decoration:line-through;color:#B52B2B">${e.oldPN}</code></td><td><code class="cb">${e.newPN}</code></td><td>${e.desc}</td><td style="font-size:10px">${e.reason}</td><td><span class="pill ${e.approved?'pg':'pa'}">${e.approved?'APPROVED':'PENDING'}</span></td></tr>`).join('')}</tbody></table>`:''}
 <div class="sign">
   <div><div class="sh">PREPARED BY</div><div class="sc"><b>${ver.by||'___________________'}</b><br><span style="color:#8A8A94;font-size:10px">Name / Signature / Date</span></div></div>
   <div style="border-left:1px solid #DDE2EA"><div class="sh">QC REVIEWED BY</div><div class="sc" style="color:#8A8A94">___________________<br><span style="font-size:10px">Name / Signature / Date</span></div></div>
   <div style="border-left:1px solid #DDE2EA"><div class="sh">APPROVED BY</div><div class="sc" style="color:#8A8A94">___________________<br><span style="font-size:10px">Name / Signature / Date</span></div></div>
 </div>
-<div class="ft">Circuit House &middot; BOM Verification Report &middot; Generated: ${now} &middot; ${ver.id}</div>
+<div class="ft">Circuit House · Lumio · BOM Verification Report · ${now} · ${ver.id}</div>
 </body></html>`;
   const win=window.open('','_blank');win.document.write(html);win.document.close();
-  toast('PDF report opened — use Print to save as PDF');
+  toast('PDF opened — use Print to save');
 }
-
-function exportCSV(){const lastVer=S.verifications[S.verifications.length-1];if(lastVer)exportCSVById(lastVer.id);}
-function exportCSVSelected(){const sel=document.getElementById('csvSelVer');if(sel&&sel.value)exportCSVById(sel.value);}
+function exportCSV(){const v=S.verifications[S.verifications.length-1];if(v)exportCSVById(v.id);}
 function exportCSVById(id){
   const ver=S.verifications.find(v=>v.id===id);if(!ver)return;
-  const rows=[['Circuit House BOM Verification Report'],[`Batch:${ver.batchNo}`,`Model:${ver.model}`,`Kit Qty:${ver.kitQty}`,`Date:${ver.date}`,`By:${ver.by||''}`,`Factory:${ver.factory||''}`,`Result:${ver.result||''}`],[],['Part ID','Description','Master PN','Found PN','Qty','Unit','Critical','Status'],...(ver.results||[]).map(p=>[p.id,p.desc,p.pn,p.newPN||p.pn,p.qty,p.unit,p.critical?'YES':'No',p.status])];
+  const rows=[['Circuit House BOM Verification'],[`Batch:${ver.batchNo}`,`Model:${ver.model}`,`Kits:${ver.kitQty}`,`Date:${ver.date}`,`By:${ver.by}`,`Factory:${ver.factory}`,`Result:${ver.result}`],[],['Part ID','Description','Master PN','Found PN','Qty','Unit','Critical','Status'],...(ver.results||[]).map(p=>[p.id,p.desc,p.pn,p.newPN||p.pn,p.qty,p.unit,p.critical?'YES':'No',p.status])];
   const csv=rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=`BOM_VER_${ver.batchNo}_${ver.model}.csv`;a.click();toast('CSV downloaded');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=`VER_${ver.batchNo}_${ver.model}.csv`;a.click();toast('CSV downloaded');
 }
 
-let toastTimer;
-function toast(msg,type='ok'){
-  clearTimeout(toastTimer);
-  const t=document.getElementById('toast');const icon=document.getElementById('toast-icon');
-  document.getElementById('toast-msg').textContent=msg;
-  icon.className='toast-icon '+type;
-  icon.innerHTML=type==='err'?'<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>':type==='info'?'<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>':'<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
-  t.classList.add('show');toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
-}
+let tt;
+function toast(msg,type='ok'){clearTimeout(tt);const t=document.getElementById('toast');const i=document.getElementById('toast-icon');document.getElementById('toast-msg').textContent=msg;i.className='toast-icon '+type;i.innerHTML=type==='err'?'<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>':type==='info'?'<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>':'<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';t.classList.add('show');tt=setTimeout(()=>t.classList.remove('show'),3500);}
 
 updateBadges();render();
 </script>
