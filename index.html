@@ -591,7 +591,7 @@ function downloadLH3GCSV(){
 
 // ── Verification ──
 function pageVerify(){if(S.verStep===1)return verStep1();if(S.verStep===2)return verStep2();if(S.verStep===3)return verStep3();return verStep1();}
-function stepsHtml(a){const s=['Batch Details','Part Verification','Report & Export'];return `<div class="steps">${s.map((n,i)=>{const num=i+1;const cls=num<a?'done':num===a?'active':'pending';return`${i>0?`<div class="step-line ${num<=a?'done':''}"></div>`''}<div class="step"><div class="step-num ${cls}">${num<a?ico.check:num}</div><span class="step-label ${cls}">${n}</span></div>`;}).join('')}</div>`;}
+function stepsHtml(a){const s=['Batch Details','Part Verification','Report & Export'];return `<div class="steps">${s.map((n,i)=>{const num=i+1;const cls=num<a?'done':num===a?'active':'pending';return`${i>0?`<div class="step-line ${num<=a?'done':''}"></div>`:''}<div class="step"><div class="step-num ${cls}">${num<a?ico.check:num}</div><span class="step-label ${cls}">${n}</span></div>`;}).join('')}</div>`;}
 function verStep1(){
   const today=new Date().toISOString().split('T')[0];
   return `<div class="page">
